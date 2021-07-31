@@ -1,27 +1,21 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using realworlddotnet.Infrastructure.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
 
 namespace realworlddotnet.Api
 {
     public class Program
     {
+
+        
         public static int Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
-
+            Infrastructure.Extensions.Logging.LoggerConfigurationExtensions
+                .SetupLoggerConfiguration("realworld_dotnet");
+            
             try
             {
                 Log.Information("Starting web host");
@@ -36,12 +30,17 @@ namespace realworlddotnet.Api
             finally
             {
                 Log.CloseAndFlush();
+                Thread.Sleep(2000);
             }
         }
-
+        
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseSerilog()
+                .UseSerilog((hostBuilderContext, services, loggerConfiguration) =>
+                {
+                    loggerConfiguration.ConfigureBaseLogging("realworld_dotnet");
+                    loggerConfiguration.AddApplicationInsightsLogging(services, hostBuilderContext.Configuration);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
