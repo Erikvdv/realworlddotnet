@@ -4,18 +4,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using realworlddotnet.Infrastructure.Extensions.Logging;
 using Serilog;
+using LoggerConfigurationExtensions = realworlddotnet.Infrastructure.Extensions.Logging.LoggerConfigurationExtensions;
 
 namespace realworlddotnet.Api
 {
     public class Program
     {
-
-        
         public static int Main(string[] args)
         {
-            Infrastructure.Extensions.Logging.LoggerConfigurationExtensions
+            LoggerConfigurationExtensions
                 .SetupLoggerConfiguration("realworld_dotnet");
-            
+
             try
             {
                 Log.Information("Starting web host");
@@ -33,17 +32,16 @@ namespace realworlddotnet.Api
                 Thread.Sleep(2000);
             }
         }
-        
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .UseSerilog((hostBuilderContext, services, loggerConfiguration) =>
                 {
                     loggerConfiguration.ConfigureBaseLogging("realworld_dotnet");
                     loggerConfiguration.AddApplicationInsightsLogging(services, hostBuilderContext.Configuration);
                 })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        }
     }
 }

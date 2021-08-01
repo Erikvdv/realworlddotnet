@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using realworlddotnet.Infrastructure.Contexts;
 
 namespace realworlddotnet.Infrastructure.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    partial class ConduitContextModelSnapshot : ModelSnapshot
+    [Migration("20210801161008_Tags")]
+    partial class Tags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

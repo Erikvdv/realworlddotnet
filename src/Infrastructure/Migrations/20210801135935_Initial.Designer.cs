@@ -2,34 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using realworlddotnet.Infrastructure.Contexts;
 
 namespace realworlddotnet.Infrastructure.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    partial class ConduitContextModelSnapshot : ModelSnapshot
+    [Migration("20210801135935_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.4");
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.Property<int>("ArticlesId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("TagsId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ArticlesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ArticleTag");
-                });
 
             modelBuilder.Entity("realworlddotnet.Domain.Entities.Article", b =>
                 {
@@ -106,16 +93,6 @@ namespace realworlddotnet.Infrastructure.Migrations
                     b.ToTable("Comment");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Tag", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags");
-                });
-
             modelBuilder.Entity("realworlddotnet.Domain.Entities.User", b =>
                 {
                     b.Property<string>("Username")
@@ -143,21 +120,6 @@ namespace realworlddotnet.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.HasOne("realworlddotnet.Domain.Entities.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticlesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("realworlddotnet.Domain.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("realworlddotnet.Domain.Entities.Article", b =>

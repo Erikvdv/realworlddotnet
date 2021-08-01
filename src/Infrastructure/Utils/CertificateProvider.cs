@@ -7,18 +7,15 @@ namespace realworlddotnet.Infrastructure.Utils
     public class CertificateProvider : ICertificateProvider
     {
         private readonly ILogger<CertificateProvider> _logger;
-        
+
         public CertificateProvider(ILogger<CertificateProvider> logger)
         {
             _logger = logger;
         }
-        
+
         public X509Certificate2 LoadFromUserStore(string thumbprint)
         {
-            if (string.IsNullOrWhiteSpace(thumbprint))
-            {
-                throw new ArgumentNullException(nameof(thumbprint));
-            }
+            if (string.IsNullOrWhiteSpace(thumbprint)) throw new ArgumentNullException(nameof(thumbprint));
 
             _logger.LogInformation($"Loading certificate {thumbprint} from store");
 
@@ -30,9 +27,7 @@ namespace realworlddotnet.Infrastructure.Utils
             store.Close();
 
             if (certCollection.Count <= 0)
-            {
                 throw new Exception($"Unable to locate any certificate with thumbprint {thumbprint}.");
-            }
 
             return certCollection[0];
         }

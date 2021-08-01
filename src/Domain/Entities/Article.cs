@@ -5,7 +5,7 @@ namespace realworlddotnet.Domain.Entities
 {
     public class Article
     {
-        public int ArticleId { get; set; }
+        public int Id { get; set; }
 
         public string Slug { get; set; }
 
@@ -15,12 +15,14 @@ namespace realworlddotnet.Domain.Entities
 
         public string Body { get; set; }
 
-        public User Author { get; set; }
+        public User Author { get; set; } = null!;
 
         public List<Comment> Comments { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+
+        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
     }
 }

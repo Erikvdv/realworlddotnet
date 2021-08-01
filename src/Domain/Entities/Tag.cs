@@ -1,12 +1,16 @@
+using System.Collections.Generic;
+
 namespace realworlddotnet.Domain.Entities
 {
     public class Tag
     {
-        public Tag(string tagId)
+        public Tag(string id)
         {
-            TagId = tagId;
+            Id = id;
         }
 
-        public string TagId { get; set; }
+        public string Id { get; set; }
+
+        public ICollection<Article> Articles { get; set; } = null!;
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +16,14 @@ namespace realworlddotnet.Api.Controllers
         {
             throw new NotImplementedException();
         }
-        
+
         [Authorize]
         [HttpPost("{username}/follow")]
         public async Task<ActionResult<UserEnvelope<UserDto>>> FollowUserAsync(string username)
         {
             throw new NotImplementedException();
         }
-        
+
         [Authorize]
         [HttpDelete("{username}/follow")]
         public async Task<ActionResult<UserEnvelope<UserDto>>> UnfollowUserAsync(string username)

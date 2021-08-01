@@ -1,16 +1,10 @@
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using realworlddotnet.Domain.Entities;
 
 namespace realworlddotnet.Domain.Dto
 {
-    public class NewArticleDto
-    {
-        [Required]
-        public string Title { get; set; }
-        [Required]
-        public string Description { get; set; }
-        [Required]
-        public string Body { get; set; }
-        [Required]
-        public string[] TagList { get; set; }
-    }
+    public record NewArticleDto (string Title, string Description, string Body, IEnumerable<string> TagList);
+    public record ArticlesResponseDto(List<Article> Articles, int ArticlesCount);
+    public record ArticlesQuery(string? Tag, string? Author, string? Favorited, int Limit = 10, int Offset = 0);
+    public record FeedQuery(int? Limit, int? Offset);
 }

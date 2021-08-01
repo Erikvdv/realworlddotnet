@@ -20,7 +20,6 @@ using realworlddotnet.Infrastructure.Extensions.ProblemDetails;
 using realworlddotnet.Infrastructure.Services;
 using realworlddotnet.Infrastructure.Utils;
 using Serilog;
-using ILogger = Serilog.ILogger;
 
 namespace realworlddotnet.Api
 {
@@ -49,8 +48,9 @@ namespace realworlddotnet.Api
 
             services.AddScoped<IConduitRepository, ConduitRepository>();
             services.AddScoped<IUserInteractor, UserInteractor>();
+            services.AddScoped<IArticlesInteractor, ArticlesInteractor>();
             services.AddSingleton<CertificateProvider>();
-            
+
             services.AddSingleton<ITokenGenerator>(container =>
             {
                 var logger = container.GetRequiredService<ILogger<CertificateProvider>>();
@@ -62,7 +62,8 @@ namespace realworlddotnet.Api
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-                .Configure<ILogger<CertificateProvider>>((o, logger) => {
+                .Configure<ILogger<CertificateProvider>>((o, logger) =>
+                {
                     var certificateProvider = new CertificateProvider(logger);
                     var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
 

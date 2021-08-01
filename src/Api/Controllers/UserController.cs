@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,19 +21,20 @@ namespace realworlddotnet.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<UserEnvelope<UserDto>>> GetUser()
+        public async Task<ActionResult<UserEnvelope<UserDto>>> GetUser(CancellationToken cancellationToken)
         {
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userInteractor.GetAsync(username);
+            var user = await _userInteractor.GetAsync(username, cancellationToken);
             return Ok(new UserEnvelope<UserDto>(user));
         }
-        
+
         [HttpPut]
-        public async Task<ActionResult<UserEnvelope<UserDto>>> UpdateUser(RequestEnvelope<UserEnvelope<UpdatedUserDto>> request)
+        public async Task<ActionResult<UserEnvelope<UserDto>>> UpdateUser(
+            RequestEnvelope<UserEnvelope<UpdatedUserDto>> request, CancellationToken cancellationToken)
         {
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userInteractor.UpdateAsync(username, request.Body.User);
-            
+            var user = await _userInteractor.UpdateAsync(username, request.Body.User, cancellationToken);
+
             return Ok(new UserEnvelope<UserDto>(user));
         }
     }

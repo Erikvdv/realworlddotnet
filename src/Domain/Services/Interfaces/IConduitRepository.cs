@@ -1,4 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using realworlddotnet.Domain.Dto;
 using realworlddotnet.Domain.Entities;
 
 namespace realworlddotnet.Domain.Services.Interfaces
@@ -7,7 +11,13 @@ namespace realworlddotnet.Domain.Services.Interfaces
     {
         public Task AddUserAsync(User user);
         public Task<User?> GetUserByEmailAsync(string email);
-        public Task<User> GetUserByUsernameAsync(string username);
+        public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken);
+
+        public Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags, CancellationToken cancellationToken);
         public Task SaveChangesAsync();
+
+        public Task<ArticlesResponseDto> GetArticles(ArticlesQuery query, CancellationToken cancellationToken);
+        public void AddArticle(Article article);
+
     }
 }

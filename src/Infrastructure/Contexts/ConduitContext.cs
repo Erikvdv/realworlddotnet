@@ -10,6 +10,9 @@ namespace realworlddotnet.Infrastructure.Contexts
         }
 
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Article> Articles { get; set; } = null!;
+        
+        public DbSet<Tag> Tags { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -19,6 +22,12 @@ namespace realworlddotnet.Infrastructure.Contexts
             {
                 entity.HasKey(e => e.Username);
                 entity.HasIndex(e => e.Email).IsUnique();
+            });
+
+            builder.Entity<Article>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Slug);
             });
         }
     }

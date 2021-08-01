@@ -2,7 +2,6 @@ using Hellang.Middleware.ProblemDetails;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-
 namespace realworlddotnet.Infrastructure.Extensions.ProblemDetails
 {
     public class ProblemDetailsLogging : IPostConfigureOptions<ProblemDetailsOptions>
@@ -13,11 +12,10 @@ namespace realworlddotnet.Infrastructure.Extensions.ProblemDetails
         {
             _logger = logger;
         }
+
         public void PostConfigure(string name, ProblemDetailsOptions options)
         {
-            options.OnBeforeWriteDetails += (context, problem) => {
-                _logger.LogInformation("{@problem}", problem);
-            };
+            options.OnBeforeWriteDetails += (context, problem) => { _logger.LogInformation("{@problem}", problem); };
         }
     }
 }
