@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using realworlddotnet.Domain.Mappers;
@@ -19,13 +20,13 @@ using realworlddotnet.Infrastructure.Extensions.ProblemDetails;
 using realworlddotnet.Infrastructure.Services;
 using realworlddotnet.Infrastructure.Utils;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace realworlddotnet.Api
 {
     public class Startup
     {
-        public const string DEFAULT_DATABASE_CONNECTIONSTRING = "Filename=../realworld.db";
-        public const string DEFAULT_DATABASE_PROVIDER = "sqlite";
+        private const string DEFAULT_DATABASE_CONNECTIONSTRING = "Filename=../realworld.db";
 
         public Startup(IConfiguration configuration)
         {
@@ -34,7 +35,6 @@ namespace realworlddotnet.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddFluentValidation(options =>
@@ -50,33 +50,35 @@ namespace realworlddotnet.Api
             services.AddScoped<IConduitRepository, ConduitRepository>();
             services.AddScoped<IUserInteractor, UserInteractor>();
             services.AddSingleton<CertificateProvider>();
-
-            var sp = services.BuildServiceProvider();
-            var certificateProvider = sp.GetService<CertificateProvider>();
-            var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
-
-
-            services.AddSingleton<ITokenGenerator>(new TokenGenerator(cert));
-
-            // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
+            
+            services.AddSingleton<ITokenGenerator>(container =>
             {
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    IssuerSigningKey = new RsaSecurityKey(cert.GetRSAPublicKey())
-                };
-                o.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = CustomOnMessageReceivedHandler.OnMessageReceived
-                };
+                var logger = container.GetRequiredService<ILogger<CertificateProvider>>();
+                var certificateProvider = new CertificateProvider(logger);
+                var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
+
+                return new TokenGenerator(cert);
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+            services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+                .Configure<ILogger<CertificateProvider>>((o, logger) => {
+                    var certificateProvider = new CertificateProvider(logger);
+                    var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
 
-            var connectionString = DEFAULT_DATABASE_CONNECTIONSTRING;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        IssuerSigningKey = new RsaSecurityKey(cert!.GetRSAPublicKey())
+                    };
+                    o.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = CustomOnMessageReceivedHandler.OnMessageReceived
+                    };
+                });
 
-            services.AddDbContext<ConduitContext>(options => { options.UseSqlite(connectionString); });
+            services.AddDbContext<ConduitContext>(options => { options.UseSqlite(DEFAULT_DATABASE_CONNECTIONSTRING); });
 
             services.AddSwaggerGen(c =>
             {

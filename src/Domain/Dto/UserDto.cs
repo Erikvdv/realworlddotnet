@@ -2,37 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace realworlddotnet.Domain.Dto
 {
-    public class NewUserDto
-    {
-        [Required] public string Username { get; init; }
-        [Required] public string Email { get; init; }
-        [Required] public string Password { get; init; }
-    }
+    public record NewUserDto(string Username, string Email, string Password);
     
-    public class LoginUserDto
-    {
-        [Required] public string Email { get; init; }
-        [Required] public string Password { get; init; }
-    };
     
+    public record LoginUserDto(string Email, string Password);
+
     /// <summary>
     /// At lease one of the items should be not null
     /// </summary>
-    public class UpdatedUserDto
-    {
-        public string? Username { get; init; }
-        public string? Email { get; init; }
-        public string? Bio { get; init; }
-        public string? Image { get; init; }
-        public string? Password { get; init; }
-    }
+    public record UpdatedUserDto(string? Username, string? Email, string? Bio, string? Image, string? Password);
 
-    public class UserDto
-    {
-        [Required] public string Username { get; init; }
-        [Required] public string Email { get; init; }
-        [Required] public string Token { get; set; }
-        [Required] public string Bio { get; init; }
-        [Required] public string Image { get; init; }
-    }
+    public record UserDto(string Username, string Email, string Token, string Bio, string Image);
 }

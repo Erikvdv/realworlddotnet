@@ -44,9 +44,9 @@ namespace realworlddotnet.Infrastructure.Services
             _context.Users.Add(user);
         }
 
-        public Task<User?> GetUserByEmailAsync(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public Task<User> GetUserByUsernameAsync(string username)

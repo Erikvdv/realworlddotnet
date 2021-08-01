@@ -15,10 +15,7 @@ namespace realworlddotnet.Domain.Services
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IMapper _mapper;
 
-        public UserInteractor(
-            IConduitRepository repository, 
-            ITokenGenerator tokenGenerator,
-            IMapper mapper)
+        public UserInteractor(IConduitRepository repository, ITokenGenerator tokenGenerator, IMapper mapper)
         {
             _repository = repository;
             _tokenGenerator = tokenGenerator;
@@ -28,14 +25,10 @@ namespace realworlddotnet.Domain.Services
         public async Task<UserDto> CreateAsync(NewUserDto newUser)
         {
             var user = new User(newUser);
-            
             await _repository.AddUserAsync(user);
             await _repository.SaveChangesAsync();
-
-            var response = _mapper.Map<User, UserDto>(user);
-            response.Token = _tokenGenerator.CreateToken(user.Username);
-            
-            return response;
+            var token = _tokenGenerator.CreateToken(user.Username);
+            return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
         }
 
         public async Task<UserDto> UpdateAsync(string username, UpdatedUserDto updatedUser)
@@ -43,11 +36,8 @@ namespace realworlddotnet.Domain.Services
             var user = await _repository.GetUserByUsernameAsync(username);
             user.UpdateUser(updatedUser);
             await _repository.SaveChangesAsync();
-            
-            var response = _mapper.Map<User, UserDto>(user);
-            response.Token = _tokenGenerator.CreateToken(user.Username);
-
-            return response;
+            var token = _tokenGenerator.CreateToken(user.Username);
+            return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
         }
 
         public async Task<UserDto> LoginAsync(LoginUserDto login)
@@ -62,20 +52,16 @@ namespace realworlddotnet.Domain.Services
                     Errors = {new KeyValuePair<string, string[]>("Credentials", new[] {"incorrect credentials"})}
                 });
             }
-            
-            var response = _mapper.Map<User, UserDto>(user);
-            response.Token = _tokenGenerator.CreateToken(user.Username);
-            
-            return response;
+
+            var token = _tokenGenerator.CreateToken(user.Username);
+            return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
         }
 
         public async Task<UserDto> GetAsync(string username)
         {
             var user = await _repository.GetUserByUsernameAsync(username);
-            var response = _mapper.Map<User, UserDto>(user);
-            response.Token = _tokenGenerator.CreateToken(user.Username);
-            
-            return response;
+            var token = _tokenGenerator.CreateToken(user.Username);
+            return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
         }
     }
 }

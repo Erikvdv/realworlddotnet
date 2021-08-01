@@ -6,8 +6,8 @@ namespace realworlddotnet.Infrastructure.Utils
 {
     public class CertificateProvider : ICertificateProvider
     {
-        private readonly ILogger _logger;
-
+        private readonly ILogger<CertificateProvider> _logger;
+        
         public CertificateProvider(ILogger<CertificateProvider> logger)
         {
             _logger = logger;

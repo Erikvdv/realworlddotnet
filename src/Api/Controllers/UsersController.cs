@@ -24,14 +24,14 @@ namespace realworlddotnet.Api.Controllers
         public async Task<ActionResult<UserEnvelope<UserDto>>> Register(RequestEnvelope<UserEnvelope<NewUserDto>> request)
         {
             var user = await _userInteractor.CreateAsync(request.Body.User);
-            return Ok(user);
+            return Ok(new UserEnvelope<UserDto>(user));
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserEnvelope<UserDto>>> Login(RequestEnvelope<UserEnvelope<LoginUserDto>> request)
         {
             var user = await _userInteractor.LoginAsync(request.Body.User);
-            return Ok(user);
+            return Ok(new UserEnvelope<UserDto>(user));
         }
     }
 }

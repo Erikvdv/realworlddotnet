@@ -5,17 +5,17 @@ namespace realworlddotnet.Domain.Entities
 {
     public class User
     {
-        public string Username { get; private set; }
-        public string Email { get; private set;}
-        public string Password { get; private set;}
+        public string Username { get; private set; } = default!;
+        public string Email { get; private set;} = default!;
+        public string Password { get; private set;} = default!;
         
         public string Bio { get; set; } = "";
         public string Image { get; set; } = "";
-        
+
         public User()
         {
+            
         }
-
         public User(NewUserDto newUser)
         {
             Password = newUser.Password;
