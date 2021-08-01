@@ -2,17 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace realworlddotnet.Api.Models
 {
-    public class ArticlesEnvelope<T>
-    {
-        [Required] 
-        public T Articles { get; init; }
-    }
     
-    public class ArticleEnvelope<T>
-    {
-        [Required] 
-        public T Article { get; init; }
-    }
+    public record ArticlesEnvelope<T>(T Articles);
+    public record ArticleEnvelope<T>(T Article);
+    
 
     public class Article
     {

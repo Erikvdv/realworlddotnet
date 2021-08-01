@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace realworlddotnet.Api.Models
 {
-    public class RequestEnvelope<T>
+    public record RequestEnvelope<T>
     {
-        [FromBody] [Required] public T Body { get; init; }
+        [Required] [FromBody]  public T Body { get; init; } = default!;
     }
     
 }

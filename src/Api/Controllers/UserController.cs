@@ -24,7 +24,7 @@ namespace realworlddotnet.Api.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userInteractor.GetAsync(username);
-            var response = new UserEnvelope<UserDto> {User = user};
+            var response = new UserEnvelope<UserDto>(user);
             return Ok(response);
         }
         
@@ -34,7 +34,7 @@ namespace realworlddotnet.Api.Controllers
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userInteractor.UpdateAsync(username, request.Body.User);
 
-            var response = new UserEnvelope<UserDto> {User = user};
+            var response = new UserEnvelope<UserDto>(user);
             return Ok(response);
         }
     }

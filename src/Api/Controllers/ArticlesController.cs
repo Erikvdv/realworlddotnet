@@ -43,7 +43,7 @@ namespace realworlddotnet.Api.Controllers
         }
         
         [Authorize]
-        [HttpPut("{slug}")]
+        [HttpDelete("{slug}")]
         public async Task<ActionResult<ArticleEnvelope<Article>>> DeleteBySlugAsync(string slug)
         {
             throw new NotImplementedException();
