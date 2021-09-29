@@ -46,20 +46,17 @@ namespace realworlddotnet.Data.Services
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
-        
+
 
         public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
         {
             return _context.Users.FirstAsync(x => x.Username == username);
         }
 
-        public async Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags,  CancellationToken cancellationToken)
+        public async Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags, CancellationToken cancellationToken)
         {
-            var dbTags = await _context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken: cancellationToken);
-            foreach (var tag in tags.Where(tag => !dbTags.Exists(x => x.Id == tag)))
-            {
-                _context.Tags.Add(new Tag(tag));
-            }
+            var dbTags = await _context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken);
+            foreach (var tag in tags.Where(tag => !dbTags.Exists(x => x.Id == tag))) _context.Tags.Add(new Tag(tag));
 
             return _context.Tags;
         }
@@ -69,26 +66,25 @@ namespace realworlddotnet.Data.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ArticlesResponseDto> GetArticles(ArticlesQuery articlesQuery, CancellationToken cancellationToken)
+        public async Task<ArticlesResponseDto> GetArticles(ArticlesQuery articlesQuery,
+            CancellationToken cancellationToken)
         {
-
             var query = _context.Articles.Select(x => x);
-            
+
             if (!string.IsNullOrWhiteSpace(articlesQuery.Author))
                 query = query.Where(x => x.Author.Username == articlesQuery.Author);
 
             if (!string.IsNullOrWhiteSpace(articlesQuery.Tag))
                 query = query.Where(x => x.Tags.Any(tag => tag.Id == articlesQuery.Tag));
-            
-            var total = await query.CountAsync(cancellationToken: cancellationToken);
+
+            var total = await query.CountAsync(cancellationToken);
             var pageQuery = query
                 .Skip(articlesQuery.Offset).Take(articlesQuery.Limit)
                 .Include(x => x.Author)
                 .Include(x => x.Tags);
-            
-                
 
-            var page = await pageQuery.ToListAsync(cancellationToken: cancellationToken);
+
+            var page = await pageQuery.ToListAsync(cancellationToken);
 
             var response = new ArticlesResponseDto(page, total);
 

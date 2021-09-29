@@ -21,10 +21,7 @@ namespace realworlddotnet.Infrastructure.Extensions.Authentication
                 context.Token = authorization.Substring("Token ".Length).Trim();
 
             // If no token found, no further work possible
-            if (string.IsNullOrEmpty(context.Token))
-            {
-                context.NoResult();
-            }
+            if (string.IsNullOrEmpty(context.Token)) context.NoResult();
 
             return Task.CompletedTask;
         }

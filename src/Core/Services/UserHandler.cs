@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using realworlddotnet.Core.Dto;
 using realworlddotnet.Core.Entities;
 using realworlddotnet.Core.Services.Interfaces;
+using realworlddotnet.Infrastructure.Utils.Interfaces;
 
 namespace realworlddotnet.Core.Services
 {
-    public class UserInteractor : IUserInteractor
+    public class UserHandler : IUserHandler
     {
         private readonly IMapper _mapper;
         private readonly IConduitRepository _repository;
         private readonly ITokenGenerator _tokenGenerator;
 
-        public UserInteractor(IConduitRepository repository, ITokenGenerator tokenGenerator, IMapper mapper)
+        public UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator, IMapper mapper)
         {
             _repository = repository;
             _tokenGenerator = tokenGenerator;
@@ -32,7 +33,8 @@ namespace realworlddotnet.Core.Services
             return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
         }
 
-        public async Task<UserDto> UpdateAsync(string username, UpdatedUserDto updatedUser, CancellationToken cancellationToken = default)
+        public async Task<UserDto> UpdateAsync(string username, UpdatedUserDto updatedUser,
+            CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
             user.UpdateUser(updatedUser);

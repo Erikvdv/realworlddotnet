@@ -5,9 +5,11 @@ using realworlddotnet.Core.Entities;
 
 namespace realworlddotnet.Core.Services.Interfaces
 {
-    public interface IArticlesInteractor
+    public interface IArticlesHandler
     {
-        public Task<Article> CreateArticleAsync(NewArticleDto newArticle, string username, CancellationToken cancellationToken);
+        public Task<Article> CreateArticleAsync(NewArticleDto newArticle, string username,
+            CancellationToken cancellationToken);
+
         public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken);
     }
 }

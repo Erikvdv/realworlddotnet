@@ -19,6 +19,7 @@ using realworlddotnet.Data.Services;
 using realworlddotnet.Infrastructure.Extensions.Authentication;
 using realworlddotnet.Infrastructure.Extensions.ProblemDetails;
 using realworlddotnet.Infrastructure.Utils;
+using realworlddotnet.Infrastructure.Utils.Interfaces;
 using Serilog;
 
 namespace realworlddotnet.Api
@@ -47,8 +48,8 @@ namespace realworlddotnet.Api
             services.AddAutoMapper(typeof(Startup), typeof(MappingProfile));
 
             services.AddScoped<IConduitRepository, ConduitRepository>();
-            services.AddScoped<IUserInteractor, UserInteractor>();
-            services.AddScoped<IArticlesInteractor, ArticlesInteractor>();
+            services.AddScoped<IUserHandler, UserHandler>();
+            services.AddScoped<IArticlesHandler, ArticlesHandler>();
             services.AddSingleton<CertificateProvider>();
 
             services.AddSingleton<ITokenGenerator>(container =>

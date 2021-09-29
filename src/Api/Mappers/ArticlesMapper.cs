@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using realworlddotnet.Api.Models;
 using realworlddotnet.Core.Dto;
@@ -34,7 +33,7 @@ namespace realworlddotnet.Api.Mappers
             var articles = articlesResponseDto.Articles
                 .Select(articleEntity => MapFromArticleEntity(articleEntity))
                 .ToList();
-            return new ArticlesResponse(articles,articlesResponseDto.ArticlesCount);
+            return new ArticlesResponse(articles, articlesResponseDto.ArticlesCount);
         }
     }
 }

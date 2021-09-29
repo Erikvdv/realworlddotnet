@@ -17,6 +17,5 @@ namespace realworlddotnet.Core.Services.Interfaces
 
         public Task<ArticlesResponseDto> GetArticles(ArticlesQuery query, CancellationToken cancellationToken);
         public void AddArticle(Article article);
-
     }
 }

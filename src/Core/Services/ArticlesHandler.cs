@@ -9,22 +9,23 @@ using realworlddotnet.Infrastructure.Utils;
 
 namespace realworlddotnet.Core.Services
 {
-    public class ArticlesInteractor : IArticlesInteractor
+    public class ArticlesHandler : IArticlesHandler
     {
         private readonly IConduitRepository _repository;
 
-        public ArticlesInteractor(IConduitRepository repository)
+        public ArticlesHandler(IConduitRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<Article> CreateArticleAsync(NewArticleDto newArticle, string username, CancellationToken cancellationToken = default)
+        public async Task<Article> CreateArticleAsync(NewArticleDto newArticle, string username,
+            CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
             var tags = await _repository.UpsertTags(newArticle.TagList, cancellationToken);
             await _repository.SaveChangesAsync();
-            
-            var article = new Article()
+
+            var article = new Article
             {
                 Author = user,
                 Body = newArticle.Body,
@@ -35,7 +36,7 @@ namespace realworlddotnet.Core.Services
                 Slug = newArticle.Title.GenerateSlug(),
                 Tags = tags.ToList()
             };
-            
+
             _repository.AddArticle(article);
             await _repository.SaveChangesAsync();
             return article;

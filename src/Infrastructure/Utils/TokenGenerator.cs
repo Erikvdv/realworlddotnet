@@ -3,10 +3,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
-using realworlddotnet.Core.Services.Interfaces;
+using realworlddotnet.Infrastructure.Utils.Interfaces;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace realworlddotnet.Core.Services
+namespace realworlddotnet.Infrastructure.Utils
 {
     public class TokenGenerator : ITokenGenerator
     {

@@ -15,29 +15,31 @@ namespace realworlddotnet.Api.Controllers
     [ApiController]
     public class ArticlesController : ControllerBase
     {
-        private readonly IArticlesInteractor _articlesInteractor;
+        private readonly IArticlesHandler _articlesHandler;
 
-        public ArticlesController(IArticlesInteractor articlesInteractor)
+        public ArticlesController(IArticlesHandler articlesHandler)
         {
-            _articlesInteractor = articlesInteractor;
+            _articlesHandler = articlesHandler;
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<ArticleEnvelope<ArticleResponse>> CreateAsync(RequestEnvelope<ArticleEnvelope<NewArticleDto>> request,
+        public async Task<ArticleEnvelope<ArticleResponse>> CreateAsync(
+            RequestEnvelope<ArticleEnvelope<NewArticleDto>> request,
             CancellationToken cancellationToken)
         {
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var article =
-                await _articlesInteractor.CreateArticleAsync(request.Body.Article, username, cancellationToken);
+                await _articlesHandler.CreateArticleAsync(request.Body.Article, username, cancellationToken);
             var result = ArticlesMapper.MapFromArticleEntity(article);
             return new ArticleEnvelope<ArticleResponse>(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<ArticlesResponse>> GetAsync([FromQuery] ArticlesQuery query, CancellationToken cancellationToken)
+        public async Task<ActionResult<ArticlesResponse>> GetAsync([FromQuery] ArticlesQuery query,
+            CancellationToken cancellationToken)
         {
-            var response = await _articlesInteractor.GetArticlesAsync(query, cancellationToken);
+            var response = await _articlesHandler.GetArticlesAsync(query, cancellationToken);
             var result = ArticlesMapper.MapFromArticles(response);
             return result;
         }
