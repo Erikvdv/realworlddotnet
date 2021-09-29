@@ -24,7 +24,6 @@ namespace realworlddotnet.Infrastructure.Extensions.Authentication
             if (string.IsNullOrEmpty(context.Token))
             {
                 context.NoResult();
-                return Task.CompletedTask;
             }
 
             return Task.CompletedTask;

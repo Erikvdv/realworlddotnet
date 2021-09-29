@@ -11,13 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using realworlddotnet.Domain.Mappers;
-using realworlddotnet.Domain.Services;
-using realworlddotnet.Domain.Services.Interfaces;
-using realworlddotnet.Infrastructure.Contexts;
+using realworlddotnet.Core.Mappers;
+using realworlddotnet.Core.Services;
+using realworlddotnet.Core.Services.Interfaces;
+using realworlddotnet.Data.Contexts;
+using realworlddotnet.Data.Services;
 using realworlddotnet.Infrastructure.Extensions.Authentication;
 using realworlddotnet.Infrastructure.Extensions.ProblemDetails;
-using realworlddotnet.Infrastructure.Services;
 using realworlddotnet.Infrastructure.Utils;
 using Serilog;
 

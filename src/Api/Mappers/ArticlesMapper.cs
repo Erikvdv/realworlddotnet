@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using realworlddotnet.Api.Models;
-using realworlddotnet.Domain.Dto;
-using realworlddotnet.Domain.Entities;
+using realworlddotnet.Core.Dto;
+using realworlddotnet.Core.Entities;
 
 namespace realworlddotnet.Api.Mappers
 {

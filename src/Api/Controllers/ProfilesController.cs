@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using realworlddotnet.Api.Models;
-using realworlddotnet.Domain.Dto;
+using realworlddotnet.Core.Dto;
 
 namespace realworlddotnet.Api.Controllers
 {

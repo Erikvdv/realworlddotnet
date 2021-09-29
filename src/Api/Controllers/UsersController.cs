@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using realworlddotnet.Api.Models;
-using realworlddotnet.Domain.Dto;
-using realworlddotnet.Domain.Services.Interfaces;
+using realworlddotnet.Core.Dto;
+using realworlddotnet.Core.Services.Interfaces;
 
 namespace realworlddotnet.Api.Controllers
 {
