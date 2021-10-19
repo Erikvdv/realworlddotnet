@@ -28,21 +28,21 @@ namespace realworlddotnet.Api.Middleware
                 var response = context.Response;
                 response.ContentType = "application/json";
 
-                switch(error)
+                switch (error)
                 {
                     case KeyNotFoundException e:
                         // not found error
-                        response.StatusCode = (int)HttpStatusCode.NotFound;
+                        response.StatusCode = (int) HttpStatusCode.NotFound;
                         break;
                     default:
                         // unhandled error
-                        response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        response.StatusCode = (int) HttpStatusCode.InternalServerError;
                         break;
                 }
 
-                var problem = new ProblemDetails()
+                var problem = new ProblemDetails
                 {
-                     Status = 200
+                    Status = 200
                 };
                 var result = JsonSerializer.Serialize(problem);
                 await response.WriteAsync(result);

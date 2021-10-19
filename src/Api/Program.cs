@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using realworlddotnet.Infrastructure.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
+using LoggerConfigurationExtensions = realworlddotnet.Infrastructure.Extensions.Logging.LoggerConfigurationExtensions;
 
 namespace realworlddotnet.Api
 {
@@ -15,11 +12,8 @@ namespace realworlddotnet.Api
     {
         public static int Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
+            LoggerConfigurationExtensions
+                .SetupLoggerConfiguration("realworld_dotnet");
 
             try
             {
@@ -35,15 +29,19 @@ namespace realworlddotnet.Api
             finally
             {
                 Log.CloseAndFlush();
+                Thread.Sleep(2000);
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .UseSerilog((hostBuilderContext, services, loggerConfiguration) =>
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    loggerConfiguration.ConfigureBaseLogging("realworld_dotnet");
+                    loggerConfiguration.AddApplicationInsightsLogging(services, hostBuilderContext.Configuration);
+                })
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        }
     }
 }

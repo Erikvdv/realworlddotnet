@@ -4,6 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>realworlddotnet.Api</RootNamespace>
         <Nullable>enable</Nullable>
+        <UserSecretsId>c55ecf86-6789-4396-b846-510f15207df1</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,8 +12,8 @@
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
         <PackageReference Include="FluentValidation" Version="9.5.2" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.2" />
-        <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="5.2.3" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />
+        <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="5.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
@@ -21,17 +22,14 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
-        <PackageReference Include="Serilog.AspNetCore" Version="4.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Validators" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Data\Data.csproj" />
+      <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 

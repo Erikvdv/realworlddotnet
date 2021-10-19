@@ -1,24 +1,24 @@
-using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
 
 namespace realworlddotnet.Api.Models
 {
-    public class ArticlesEnvelope<T>
-    {
-        [Required] 
-        public T Articles { get; init; }
-    }
-    
-    public class ArticleEnvelope<T>
-    {
-        [Required] 
-        public T Article { get; init; }
-    }
+    public record ArticleEnvelope<T>(T Article);
 
-    public class Article
-    {
-        
-    }
+    public record Author(string Username, string Image, string Bio, bool Following);
 
-    public record ArticlesQuery(string? Tag, string? Author, string? Favorited, int? Limit, int? Offset);
-    public record FeedQuery(int? Limit, int? Offset);
+    public record ArticleResponse(
+        string Slug,
+        string Title,
+        string Description,
+        string Body,
+        DateTimeOffset CreatedAt,
+        DateTimeOffset UpdatedAt,
+        IEnumerable<string> TagList,
+        Author Author,
+        bool Favorited,
+        int FavoritesCount
+    );
+
+    public record ArticlesResponse(IEnumerable<ArticleResponse> Articles, int ArticlesCount);
 }

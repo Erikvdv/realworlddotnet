@@ -8,7 +8,6 @@ namespace realworlddotnet.Infrastructure.Extensions.Authentication
     {
         public static Task OnMessageReceived(MessageReceivedContext context)
         {
-            
             string authorization = context.Request.Headers["Authorization"];
 
             // If no authorization header found, nothing to process further
@@ -19,19 +18,12 @@ namespace realworlddotnet.Infrastructure.Extensions.Authentication
             }
 
             if (authorization.StartsWith("Token ", StringComparison.OrdinalIgnoreCase))
-            {
                 context.Token = authorization.Substring("Token ".Length).Trim();
-            }
 
             // If no token found, no further work possible
-            if (string.IsNullOrEmpty(context.Token))
-            {
-                context.NoResult();
-                return Task.CompletedTask;
-            }
+            if (string.IsNullOrEmpty(context.Token)) context.NoResult();
 
             return Task.CompletedTask;
         }
-
     }
 }
