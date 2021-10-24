@@ -50,13 +50,17 @@ namespace realworlddotnet.Data.Services
 
         public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
         {
-            return _context.Users.FirstAsync(x => x.Username == username);
+            return _context.Users.FirstAsync(x => x.Username == username, cancellationToken: cancellationToken);
         }
 
         public async Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags, CancellationToken cancellationToken)
         {
             var dbTags = await _context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken);
-            foreach (var tag in tags.Where(tag => !dbTags.Exists(x => x.Id == tag))) _context.Tags.Add(new Tag(tag));
+            foreach (var tag in tags)
+            {
+                if (!dbTags.Exists(x => x.Id == tag)) 
+                    _context.Tags.Add(new Tag(tag));
+            }
 
             return _context.Tags;
         }
@@ -82,13 +86,10 @@ namespace realworlddotnet.Data.Services
                 .Skip(articlesQuery.Offset).Take(articlesQuery.Limit)
                 .Include(x => x.Author)
                 .Include(x => x.Tags);
-
-
+            
             var page = await pageQuery.ToListAsync(cancellationToken);
 
-            var response = new ArticlesResponseDto(page, total);
-
-            return response;
+            return new ArticlesResponseDto(page, total);
         }
 
         public void AddArticle(Article article)
