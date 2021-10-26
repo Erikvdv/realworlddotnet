@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using realworlddotnet.Core.Entities;
+using Realworlddotnet.Core.Entities;
 
-namespace realworlddotnet.Core.Dto
+namespace Realworlddotnet.Core.Dto
 {
-    public record NewArticleDto (string Title, string Description, string Body, IEnumerable<string> TagList);
+    public record NewArticleDto(string Title, string Description, string Body, IEnumerable<string> TagList);
 
     public record ArticlesResponseDto(List<Article> Articles, int ArticlesCount);
 

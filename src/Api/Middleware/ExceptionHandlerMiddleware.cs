@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace realworlddotnet.Api.Middleware
+namespace Realworlddotnet.Api.Middleware
 {
     public class ExceptionHandlerMiddleware
     {
@@ -32,18 +32,15 @@ namespace realworlddotnet.Api.Middleware
                 {
                     case KeyNotFoundException e:
                         // not found error
-                        response.StatusCode = (int) HttpStatusCode.NotFound;
+                        response.StatusCode = (int)HttpStatusCode.NotFound;
                         break;
                     default:
                         // unhandled error
-                        response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                        response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         break;
                 }
 
-                var problem = new ProblemDetails
-                {
-                    Status = 200
-                };
+                var problem = new ProblemDetails {Status = 200};
                 var result = JsonSerializer.Serialize(problem);
                 await response.WriteAsync(result);
             }

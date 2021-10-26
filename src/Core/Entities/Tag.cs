@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace realworlddotnet.Core.Entities
+namespace Realworlddotnet.Core.Entities
 {
     public class Tag
     {

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace realworlddotnet.Infrastructure.Extensions.Authentication
+namespace Realworlddotnet.Infrastructure.Extensions.Authentication
 {
     public static class CustomOnMessageReceivedHandler
     {
@@ -18,10 +18,15 @@ namespace realworlddotnet.Infrastructure.Extensions.Authentication
             }
 
             if (authorization.StartsWith("Token ", StringComparison.OrdinalIgnoreCase))
+            {
                 context.Token = authorization.Substring("Token ".Length).Trim();
+            }
 
             // If no token found, no further work possible
-            if (string.IsNullOrEmpty(context.Token)) context.NoResult();
+            if (string.IsNullOrEmpty(context.Token))
+            {
+                context.NoResult();
+            }
 
             return Task.CompletedTask;
         }

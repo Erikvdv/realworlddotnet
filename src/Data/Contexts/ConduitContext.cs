@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using realworlddotnet.Core.Entities;
+using Realworlddotnet.Core.Entities;
 
-namespace realworlddotnet.Data.Contexts
+namespace Realworlddotnet.Data.Contexts
 {
     public class ConduitContext : DbContext
     {
@@ -13,17 +13,16 @@ namespace realworlddotnet.Data.Contexts
         public DbSet<Article> Articles { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
 
-
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
-            builder.Entity<User>(entity =>
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Username);
                 entity.HasIndex(e => e.Email).IsUnique();
             });
 
-            builder.Entity<Article>(entity =>
+            modelBuilder.Entity<Article>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.Slug);

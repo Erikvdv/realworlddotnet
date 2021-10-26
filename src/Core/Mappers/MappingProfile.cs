@@ -1,8 +1,8 @@
 using AutoMapper;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Entities;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Entities;
 
-namespace realworlddotnet.Core.Mappers
+namespace Realworlddotnet.Core.Mappers
 {
     public class MappingProfile : Profile
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace realworlddotnet.Api.Models
+namespace Realworlddotnet.Api.Models
 {
     public record ArticleEnvelope<T>(T Article);
 
@@ -17,8 +17,7 @@ namespace realworlddotnet.Api.Models
         IEnumerable<string> TagList,
         Author Author,
         bool Favorited,
-        int FavoritesCount
-    );
+        int FavoritesCount);
 
     public record ArticlesResponse(IEnumerable<ArticleResponse> Articles, int ArticlesCount);
 }

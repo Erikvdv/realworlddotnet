@@ -1,9 +1,9 @@
 using System.Linq;
-using realworlddotnet.Api.Models;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Entities;
+using Realworlddotnet.Api.Models;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Entities;
 
-namespace realworlddotnet.Api.Mappers
+namespace Realworlddotnet.Api.Mappers
 {
     public static class ArticlesMapper
     {
@@ -19,7 +19,8 @@ namespace realworlddotnet.Api.Mappers
                 article.CreatedAt,
                 article.UpdatedAt,
                 tags,
-                new Author(author.Username,
+                new Author(
+                    author.Username,
                     author.Image,
                     author.Bio,
                     false),

@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using realworlddotnet.Api.Models;
-using realworlddotnet.Core.Dto;
+using Realworlddotnet.Api.Models;
+using Realworlddotnet.Core.Dto;
 
-namespace realworlddotnet.Api.Controllers
+namespace Realworlddotnet.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -14,6 +14,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<ProfilesEnvelope<Profile>>> GetProfileAsync(string username)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -21,6 +22,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpPost("{username}/follow")]
         public async Task<ActionResult<UserEnvelope<UserDto>>> FollowUserAsync(string username)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -28,6 +30,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpDelete("{username}/follow")]
         public async Task<ActionResult<UserEnvelope<UserDto>>> UnfollowUserAsync(string username)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
     }

@@ -3,9 +3,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using realworlddotnet.Data.Contexts;
+using Realworlddotnet.Data.Contexts;
 
-namespace realworlddotnet.Infrastructure.Migrations
+namespace Realworlddotnet.Infrastructure.Migrations
 {
     [DbContext(typeof(ConduitContext))]
     partial class ConduitContextModelSnapshot : ModelSnapshot

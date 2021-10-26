@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using realworlddotnet.Api.Models;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Api.Models;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Services.Interfaces;
 
-namespace realworlddotnet.Api.Controllers
+namespace Realworlddotnet.Api.Controllers
 {
     [Route("[controller]")]
     [Authorize]

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Entities;
-using realworlddotnet.Core.Services.Interfaces;
-using realworlddotnet.Data.Contexts;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Entities;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Data.Contexts;
 
-namespace realworlddotnet.Data.Services
+namespace Realworlddotnet.Data.Services
 {
     public class ConduitRepository : IConduitRepository
     {
@@ -24,20 +24,24 @@ namespace realworlddotnet.Data.Services
         public async Task AddUserAsync(User user)
         {
             if (await _context.Users.AnyAsync(x => x.Username == user.Username))
+            {
                 throw new ProblemDetailsException(new ValidationProblemDetails
                 {
                     Status = 422,
                     Detail = "Cannot register user",
                     Errors = {new KeyValuePair<string, string[]>("Username", new[] {"Username not available"})}
                 });
+            }
 
             if (await _context.Users.AnyAsync(x => x.Email == user.Email))
+            {
                 throw new ProblemDetailsException(new ValidationProblemDetails
                 {
                     Status = 422,
                     Detail = "Cannot register user",
                     Errors = {new KeyValuePair<string, string[]>("Email", new[] {"Email address already in use"})}
                 });
+            }
 
             _context.Users.Add(user);
         }
@@ -50,16 +54,20 @@ namespace realworlddotnet.Data.Services
 
         public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
         {
-            return _context.Users.FirstAsync(x => x.Username == username, cancellationToken: cancellationToken);
+            return _context.Users.FirstAsync(x => x.Username == username, cancellationToken);
         }
 
-        public async Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags, 
+            CancellationToken cancellationToken)
         {
             var dbTags = await _context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken);
+
             foreach (var tag in tags)
             {
-                if (!dbTags.Exists(x => x.Id == tag)) 
+                if (!dbTags.Exists(x => x.Id == tag))
+                {
                     _context.Tags.Add(new Tag(tag));
+                }
             }
 
             return _context.Tags;
@@ -70,23 +78,28 @@ namespace realworlddotnet.Data.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ArticlesResponseDto> GetArticles(ArticlesQuery articlesQuery,
+        public async Task<ArticlesResponseDto> GetArticles(
+            ArticlesQuery articlesQuery,
             CancellationToken cancellationToken)
         {
             var query = _context.Articles.Select(x => x);
 
             if (!string.IsNullOrWhiteSpace(articlesQuery.Author))
+            {
                 query = query.Where(x => x.Author.Username == articlesQuery.Author);
+            }
 
             if (!string.IsNullOrWhiteSpace(articlesQuery.Tag))
+            {
                 query = query.Where(x => x.Tags.Any(tag => tag.Id == articlesQuery.Tag));
+            }
 
             var total = await query.CountAsync(cancellationToken);
             var pageQuery = query
                 .Skip(articlesQuery.Offset).Take(articlesQuery.Limit)
                 .Include(x => x.Author)
                 .Include(x => x.Tags);
-            
+
             var page = await pageQuery.ToListAsync(cancellationToken);
 
             return new ArticlesResponseDto(page, total);

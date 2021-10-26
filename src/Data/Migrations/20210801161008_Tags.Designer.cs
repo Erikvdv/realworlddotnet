@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using realworlddotnet.Data.Contexts;
+using Realworlddotnet.Data.Contexts;
 
-namespace realworlddotnet.Infrastructure.Migrations
+namespace Realworlddotnet.Infrastructure.Migrations
 {
     [DbContext(typeof(ConduitContext))]
     [Migration("20210801161008_Tags")]

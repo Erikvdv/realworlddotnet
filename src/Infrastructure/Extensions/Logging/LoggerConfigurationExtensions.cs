@@ -6,24 +6,21 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 
-namespace realworlddotnet.Infrastructure.Extensions.Logging
+namespace Realworlddotnet.Infrastructure.Extensions.Logging
 {
     public static class LoggerConfigurationExtensions
     {
         public static void SetupLoggerConfiguration(string appName)
         {
-            Log.Logger = new LoggerConfiguration()
-                .ConfigureBaseLogging(appName)
+            Log.Logger = new LoggerConfiguration().ConfigureBaseLogging(appName)
                 .CreateLogger();
         }
 
         public static LoggerConfiguration ConfigureBaseLogging(
             this LoggerConfiguration loggerConfiguration,
-            string appName
-        )
+            string appName)
         {
-            loggerConfiguration
-                .MinimumLevel.Debug()
+            loggerConfiguration.MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .WriteTo.Async(a => a.Console())
@@ -34,13 +31,18 @@ namespace realworlddotnet.Infrastructure.Extensions.Logging
             return loggerConfiguration;
         }
 
-        public static LoggerConfiguration AddApplicationInsightsLogging(this LoggerConfiguration loggerConfiguration,
-            IServiceProvider services, IConfiguration configuration)
+        public static LoggerConfiguration AddApplicationInsightsLogging(
+            this LoggerConfiguration loggerConfiguration,
+            IServiceProvider services,
+            IConfiguration configuration)
         {
             var instrumentationKey = configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
             var authenticationApiKey = configuration.GetValue<string>("ApplicationInsights:AuthenticationApiKey");
+
             if (string.IsNullOrWhiteSpace(instrumentationKey))
+            {
                 return loggerConfiguration;
+            }
 
             TelemetryConfiguration config = TelemetryConfiguration.CreateDefault();
             config.InstrumentationKey = instrumentationKey;
@@ -48,8 +50,7 @@ namespace realworlddotnet.Infrastructure.Extensions.Logging
             if (!string.IsNullOrWhiteSpace(authenticationApiKey))
             {
                 QuickPulseTelemetryProcessor? quickPulseProcessor = null;
-                config.DefaultTelemetrySink.TelemetryProcessorChainBuilder
-                    .Use(next =>
+                config.DefaultTelemetrySink.TelemetryProcessorChainBuilder.Use(next =>
                     {
                         quickPulseProcessor = new QuickPulseTelemetryProcessor(next);
                         return quickPulseProcessor;

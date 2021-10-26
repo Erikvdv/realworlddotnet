@@ -11,22 +11,22 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using realworlddotnet.Core.Mappers;
-using realworlddotnet.Core.Services;
-using realworlddotnet.Core.Services.Interfaces;
-using realworlddotnet.Data.Contexts;
-using realworlddotnet.Data.Services;
-using realworlddotnet.Infrastructure.Extensions.Authentication;
-using realworlddotnet.Infrastructure.Extensions.ProblemDetails;
-using realworlddotnet.Infrastructure.Utils;
-using realworlddotnet.Infrastructure.Utils.Interfaces;
+using Realworlddotnet.Core.Mappers;
+using Realworlddotnet.Core.Services;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Data.Contexts;
+using Realworlddotnet.Data.Services;
+using Realworlddotnet.Infrastructure.Extensions.Authentication;
+using Realworlddotnet.Infrastructure.Extensions.ProblemDetails;
+using Realworlddotnet.Infrastructure.Utils;
+using Realworlddotnet.Infrastructure.Utils.Interfaces;
 using Serilog;
 
-namespace realworlddotnet.Api
+namespace Realworlddotnet.Api
 {
     public class Startup
     {
-        private const string DEFAULT_DATABASE_CONNECTIONSTRING = "Filename=../realworld.db";
+        private const string DefaultDatabaseConnectionstring = "Filename=../realworld.db";
 
         public Startup(IConfiguration configuration)
         {
@@ -80,7 +80,7 @@ namespace realworlddotnet.Api
                     };
                 });
 
-            services.AddDbContext<ConduitContext>(options => { options.UseSqlite(DEFAULT_DATABASE_CONNECTIONSTRING); });
+            services.AddDbContext<ConduitContext>(options => { options.UseSqlite(DefaultDatabaseConnectionstring); });
 
             services.AddSwaggerGen(c =>
             {

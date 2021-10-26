@@ -1,6 +1,6 @@
-using realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Dto;
 
-namespace realworlddotnet.Core.Entities
+namespace Realworlddotnet.Core.Entities
 {
     public class User
     {
@@ -16,11 +16,14 @@ namespace realworlddotnet.Core.Entities
         }
 
         public string Username { get; set; } = default!;
+
         public string Email { get; set; } = default!;
+
         public string Password { get; set; } = default!;
 
-        public string Bio { get; set; } = "";
-        public string Image { get; set; } = "";
+        public string Bio { get; set; } = string.Empty;
+
+        public string Image { get; set; } = string.Empty;
 
         public void UpdateUser(UpdatedUserDto updatedUser)
         {
