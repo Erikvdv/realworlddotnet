@@ -1,4 +1,4 @@
-namespace realworlddotnet.Api.Models
+namespace Realworlddotnet.Api.Models
 {
     public record ProfilesEnvelope<T>(T Profile);
 

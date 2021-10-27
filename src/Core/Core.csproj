@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>realworlddotnet.Core</RootNamespace>
+        <RootNamespace>Realworlddotnet.Core</RootNamespace>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -12,7 +12,8 @@
       <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.7.1" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
     </ItemGroup>
-
+    
+    
     <ItemGroup>
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>realworlddotnet.Infrastructure</RootNamespace>
+        <RootNamespace>Realworlddotnet.Infrastructure</RootNamespace>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -23,11 +23,5 @@
       <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore.Mvc.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-        <HintPath>..\..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0\ref\net5.0\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
+    
 </Project>

@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Entities;
-using realworlddotnet.Core.Services.Interfaces;
-using realworlddotnet.Infrastructure.Utils;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Entities;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Infrastructure.Utils;
 
-namespace realworlddotnet.Core.Services
+namespace Realworlddotnet.Core.Services
 {
     public class ArticlesHandler : IArticlesHandler
     {
@@ -18,24 +19,24 @@ namespace realworlddotnet.Core.Services
             _repository = repository;
         }
 
-        public async Task<Article> CreateArticleAsync(NewArticleDto newArticle, string username,
-            CancellationToken cancellationToken = default)
+        public async Task<Article> CreateArticleAsync(
+            NewArticleDto newArticle, string username, CancellationToken cancellationToken)
         {
             var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
             var tags = await _repository.UpsertTags(newArticle.TagList, cancellationToken);
             await _repository.SaveChangesAsync();
 
-            var article = new Article
-            {
-                Author = user,
-                Body = newArticle.Body,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Description = newArticle.Description,
-                Title = newArticle.Title,
-                Slug = newArticle.Title.GenerateSlug(),
-                Tags = tags.ToList()
-            };
+            var article = new Article(Guid.Empty,
+                    newArticle.Title.GenerateSlug(),
+                    newArticle.Title,
+                    newArticle.Description,
+                    newArticle.Body,
+                    user,
+                    new List<Comment>(),
+                    DateTime.UtcNow,
+                    DateTime.UtcNow, 
+                    tags.ToList())
+                ;
 
             _repository.AddArticle(article);
             await _repository.SaveChangesAsync();

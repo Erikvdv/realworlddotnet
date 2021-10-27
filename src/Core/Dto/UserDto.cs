@@ -1,4 +1,4 @@
-namespace realworlddotnet.Core.Dto
+namespace Realworlddotnet.Core.Dto
 {
     public record NewUserDto(string Username, string Email, string Password);
 

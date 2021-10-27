@@ -2,13 +2,13 @@ using System;
 using System.Threading;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using realworlddotnet.Infrastructure.Extensions.Logging;
+using Realworlddotnet.Infrastructure.Extensions.Logging;
 using Serilog;
-using LoggerConfigurationExtensions = realworlddotnet.Infrastructure.Extensions.Logging.LoggerConfigurationExtensions;
+using LoggerConfigurationExtensions = Realworlddotnet.Infrastructure.Extensions.Logging.LoggerConfigurationExtensions;
 
-namespace realworlddotnet.Api
+namespace Realworlddotnet.Api
 {
-    public class Program
+    public static class Program
     {
         public static int Main(string[] args)
         {

@@ -4,12 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using realworlddotnet.Api.Mappers;
-using realworlddotnet.Api.Models;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Api.Mappers;
+using Realworlddotnet.Api.Models;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Services.Interfaces;
 
-namespace realworlddotnet.Api.Controllers
+namespace Realworlddotnet.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -36,8 +36,8 @@ namespace realworlddotnet.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ArticlesResponse>> GetAsync([FromQuery] ArticlesQuery query,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<ArticlesResponse>> GetAsync(
+            [FromQuery] ArticlesQuery query, CancellationToken cancellationToken)
         {
             var response = await _articlesHandler.GetArticlesAsync(query, cancellationToken);
             var result = ArticlesMapper.MapFromArticles(response);
@@ -47,6 +47,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpGet("{slug}")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -54,6 +55,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpPut("{slug}")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UpdateBySlugAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -61,6 +63,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpDelete("{slug}")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -68,6 +71,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpPost("{slug}/favorite")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -75,6 +79,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpDelete("{slug}/favorite")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -82,6 +87,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpGet("feed")]
         public async Task<ActionResult<ArticlesResponseDto>> GetFeedAsync([FromQuery] FeedQuery query)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -89,13 +95,14 @@ namespace realworlddotnet.Api.Controllers
         [HttpPost("{slug}/comments")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> AddCommentAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
-
 
         [HttpGet("{slug}/comments")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
 
@@ -103,6 +110,7 @@ namespace realworlddotnet.Api.Controllers
         [HttpDelete("{slug}/comments/{commentId}")]
         public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, string commentId)
         {
+            await Task.CompletedTask;
             throw new NotImplementedException();
         }
     }

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace realworlddotnet.Api.Models
+namespace Realworlddotnet.Api.Models
 {
     public record RequestEnvelope<T>
     {

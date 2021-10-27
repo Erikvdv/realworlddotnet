@@ -4,11 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using realworlddotnet.Api.Models;
-using realworlddotnet.Core.Dto;
-using realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Api.Models;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Services.Interfaces;
 
-namespace realworlddotnet.Api.Controllers
+namespace Realworlddotnet.Api.Controllers
 {
     [Route("[controller]")]
     [Authorize]
@@ -33,7 +33,6 @@ namespace realworlddotnet.Api.Controllers
         public async Task<ActionResult<UserEnvelope<UserDto>>> UpdateUser(
             RequestEnvelope<UserEnvelope<UpdatedUserDto>> request, CancellationToken cancellationToken)
         {
-            var tst = System.IO.File.ReadAllText(request.Body.User.Bio, Encoding.UTF8);
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userHandler.UpdateAsync(username, request.Body.User, cancellationToken);
 

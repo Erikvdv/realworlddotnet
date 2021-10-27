@@ -1,6 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 
-namespace realworlddotnet.Infrastructure.Utils.Interfaces
+namespace Realworlddotnet.Infrastructure.Utils.Interfaces
 {
     public interface ICertificateProvider
     {

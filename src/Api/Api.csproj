@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>realworlddotnet.Api</RootNamespace>
+        <RootNamespace>Realworlddotnet.Api</RootNamespace>
         <Nullable>enable</Nullable>
         <UserSecretsId>c55ecf86-6789-4396-b846-510f15207df1</UserSecretsId>
     </PropertyGroup>
@@ -26,7 +26,7 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
     </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\Data\Data.csproj" />
       <ProjectReference Include="..\Core\Core.csproj" />

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace realworlddotnet.Infrastructure.Migrations
+namespace Realworlddotnet.Infrastructure.Migrations
 {
     public partial class Tags : Migration
     {
