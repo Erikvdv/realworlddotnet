@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -32,6 +33,7 @@ namespace Realworlddotnet.Api.Controllers
         public async Task<ActionResult<UserEnvelope<UserDto>>> UpdateUser(
             RequestEnvelope<UserEnvelope<UpdatedUserDto>> request, CancellationToken cancellationToken)
         {
+            var tst = System.IO.File.ReadAllText(request.Body.User.Bio, Encoding.UTF8);
             var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userHandler.UpdateAsync(username, request.Body.User, cancellationToken);
 
