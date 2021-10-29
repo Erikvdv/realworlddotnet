@@ -22,12 +22,6 @@ public class ArticlesController : ControllerBase
         _articlesHandler = articlesHandler;
     }
 
-    [HttpGet("test")]
-    public async Task<ActionResult> GetTestAsync()
-    {
-        return Ok("yes123");
-    }
-
     [HttpPost]
     [Authorize]
     public async Task<ArticleEnvelope<ArticleResponse>> CreateAsync(
