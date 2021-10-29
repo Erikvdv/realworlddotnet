@@ -6,68 +6,67 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 
-namespace Realworlddotnet.Infrastructure.Extensions.Logging
+namespace Realworlddotnet.Infrastructure.Extensions.Logging;
+
+public static class LoggerConfigurationExtensions
 {
-    public static class LoggerConfigurationExtensions
+    public static void SetupLoggerConfiguration(string appName)
     {
-        public static void SetupLoggerConfiguration(string appName)
-        {
-            Log.Logger = new LoggerConfiguration().ConfigureBaseLogging(appName)
-                .CreateLogger();
-        }
+        Log.Logger = new LoggerConfiguration().ConfigureBaseLogging(appName)
+            .CreateLogger();
+    }
 
-        public static LoggerConfiguration ConfigureBaseLogging(
-            this LoggerConfiguration loggerConfiguration,
-            string appName)
+    public static LoggerConfiguration ConfigureBaseLogging(
+        this LoggerConfiguration loggerConfiguration,
+        string appName)
+    {
+        loggerConfiguration.MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .WriteTo.Async(a => a.Console())
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithThreadId()
+            .Enrich.WithProperty("ApplicationName", appName);
+        return loggerConfiguration;
+    }
+
+    public static LoggerConfiguration AddApplicationInsightsLogging(
+        this LoggerConfiguration loggerConfiguration,
+        IServiceProvider services,
+        IConfiguration configuration)
+    {
+        var instrumentationKey = configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
+        var authenticationApiKey = configuration.GetValue<string>("ApplicationInsights:AuthenticationApiKey");
+
+        if (string.IsNullOrWhiteSpace(instrumentationKey))
         {
-            loggerConfiguration.MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .WriteTo.Async(a => a.Console())
-                .Enrich.FromLogContext()
-                .Enrich.WithMachineName()
-                .Enrich.WithThreadId()
-                .Enrich.WithProperty("ApplicationName", appName);
             return loggerConfiguration;
         }
 
-        public static LoggerConfiguration AddApplicationInsightsLogging(
-            this LoggerConfiguration loggerConfiguration,
-            IServiceProvider services,
-            IConfiguration configuration)
+        var config = TelemetryConfiguration.CreateDefault();
+        config.InstrumentationKey = instrumentationKey;
+
+        if (!string.IsNullOrWhiteSpace(authenticationApiKey))
         {
-            var instrumentationKey = configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
-            var authenticationApiKey = configuration.GetValue<string>("ApplicationInsights:AuthenticationApiKey");
+            QuickPulseTelemetryProcessor? quickPulseProcessor = null;
+            config.DefaultTelemetrySink.TelemetryProcessorChainBuilder.Use(next =>
+                {
+                    quickPulseProcessor = new QuickPulseTelemetryProcessor(next);
+                    return quickPulseProcessor;
+                })
+                .Build();
+            var quickPulse = new QuickPulseTelemetryModule { AuthenticationApiKey = authenticationApiKey };
+            quickPulse.Initialize(config);
 
-            if (string.IsNullOrWhiteSpace(instrumentationKey))
-            {
-                return loggerConfiguration;
-            }
-
-            TelemetryConfiguration config = TelemetryConfiguration.CreateDefault();
-            config.InstrumentationKey = instrumentationKey;
-
-            if (!string.IsNullOrWhiteSpace(authenticationApiKey))
-            {
-                QuickPulseTelemetryProcessor? quickPulseProcessor = null;
-                config.DefaultTelemetrySink.TelemetryProcessorChainBuilder.Use(next =>
-                    {
-                        quickPulseProcessor = new QuickPulseTelemetryProcessor(next);
-                        return quickPulseProcessor;
-                    })
-                    .Build();
-                var quickPulse = new QuickPulseTelemetryModule {AuthenticationApiKey = authenticationApiKey};
-                quickPulse.Initialize(config);
-
-                quickPulse.RegisterTelemetryProcessor(quickPulseProcessor);
-            }
-
-            TelemetryClient client = new(config);
-            loggerConfiguration.WriteTo.ApplicationInsights(
-                client,
-                TelemetryConverter.Traces);
-
-            return loggerConfiguration;
+            quickPulse.RegisterTelemetryProcessor(quickPulseProcessor);
         }
+
+        TelemetryClient client = new(config);
+        loggerConfiguration.WriteTo.ApplicationInsights(
+            client,
+            TelemetryConverter.Traces);
+
+        return loggerConfiguration;
     }
 }

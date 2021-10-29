@@ -22,92 +22,88 @@ using Realworlddotnet.Infrastructure.Utils;
 using Realworlddotnet.Infrastructure.Utils.Interfaces;
 using Serilog;
 
-namespace Realworlddotnet.Api
+namespace Realworlddotnet.Api;
+
+public class Startup
 {
-    public class Startup
+    private const string DefaultDatabaseConnectionstring = "Filename=../realworld.db";
+
+    public Startup(IConfiguration configuration)
     {
-        private const string DefaultDatabaseConnectionstring = "Filename=../realworld.db";
+        Configuration = configuration;
+    }
 
-        public Startup(IConfiguration configuration)
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers().AddFluentValidation(options =>
         {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
+            options.RegisterValidatorsFromAssemblyContaining(typeof(Startup));
+        });
+        services.Configure<ApiBehaviorOptions>(options =>
         {
-            services.AddControllers().AddFluentValidation(options =>
-            {
-                options.RegisterValidatorsFromAssemblyContaining(typeof(Startup));
-            });
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressInferBindingSourcesForParameters = true;
-            });
-            services.AddAutoMapper(typeof(Startup), typeof(MappingProfile));
+            options.SuppressInferBindingSourcesForParameters = true;
+        });
+        services.AddAutoMapper(typeof(Startup), typeof(MappingProfile));
 
-            services.AddScoped<IConduitRepository, ConduitRepository>();
-            services.AddScoped<IUserHandler, UserHandler>();
-            services.AddScoped<IArticlesHandler, ArticlesHandler>();
-            services.AddSingleton<CertificateProvider>();
+        services.AddScoped<IConduitRepository, ConduitRepository>();
+        services.AddScoped<IUserHandler, UserHandler>();
+        services.AddScoped<IArticlesHandler, ArticlesHandler>();
+        services.AddSingleton<CertificateProvider>();
 
-            services.AddSingleton<ITokenGenerator>(container =>
+        services.AddSingleton<ITokenGenerator>(container =>
+        {
+            var logger = container.GetRequiredService<ILogger<CertificateProvider>>();
+            var certificateProvider = new CertificateProvider(logger);
+            var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
+
+            return new TokenGenerator(cert);
+        });
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<ILogger<CertificateProvider>>((o, logger) =>
             {
-                var logger = container.GetRequiredService<ILogger<CertificateProvider>>();
                 var certificateProvider = new CertificateProvider(logger);
                 var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
 
-                return new TokenGenerator(cert);
-            });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-            services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-                .Configure<ILogger<CertificateProvider>>((o, logger) =>
+                o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    var certificateProvider = new CertificateProvider(logger);
-                    var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
-
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                        IssuerSigningKey = new RsaSecurityKey(cert!.GetRSAPublicKey())
-                    };
-                    o.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = CustomOnMessageReceivedHandler.OnMessageReceived
-                    };
-                });
-
-            services.AddDbContext<ConduitContext>(options => { options.UseSqlite(DefaultDatabaseConnectionstring); });
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SupportNonNullableReferenceTypes();
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "realworlddotnet", Version = "v1"});
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    IssuerSigningKey = new RsaSecurityKey(cert!.GetRSAPublicKey())
+                };
+                o.Events = new JwtBearerEvents { OnMessageReceived = CustomOnMessageReceivedHandler.OnMessageReceived };
             });
-            services.AddProblemDetails();
-            services.ConfigureOptions<ProblemDetailsLogging>();
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        services.AddDbContext<ConduitContext>(options => { options.UseSqlite(DefaultDatabaseConnectionstring); });
+
+        services.AddSwaggerGen(c =>
         {
-            app.UseSerilogRequestLogging();
-            app.UseProblemDetails();
+            c.SupportNonNullableReferenceTypes();
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "realworlddotnet", Version = "v1" });
+        });
+        services.AddProblemDetails();
+        services.ConfigureOptions<ProblemDetailsLogging>();
+    }
 
-            app.UseHttpsRedirection();
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseSerilogRequestLogging();
+        app.UseProblemDetails();
 
-            app.UseAuthentication();
+        app.UseHttpsRedirection();
 
-            app.UseRouting();
+        app.UseAuthentication();
 
-            app.UseAuthorization();
+        app.UseRouting();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "realworlddotnet v1"));
-        }
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "realworlddotnet v1"));
     }
 }

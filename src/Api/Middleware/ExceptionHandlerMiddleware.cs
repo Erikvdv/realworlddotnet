@@ -6,44 +6,43 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Realworlddotnet.Api.Middleware
+namespace Realworlddotnet.Api.Middleware;
+
+public class ExceptionHandlerMiddleware
 {
-    public class ExceptionHandlerMiddleware
+    private readonly RequestDelegate _next;
+
+    public ExceptionHandlerMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+    public async Task Invoke(HttpContext context)
+    {
+        try
         {
-            _next = next;
+            await _next(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        catch (Exception error)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception error)
-            {
-                var response = context.Response;
-                response.ContentType = "application/json";
+            var response = context.Response;
+            response.ContentType = "application/json";
 
-                switch (error)
-                {
-                    case KeyNotFoundException e:
-                        // not found error
-                        response.StatusCode = (int)HttpStatusCode.NotFound;
-                        break;
-                    default:
-                        // unhandled error
-                        response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        break;
-                }
-
-                var problem = new ProblemDetails {Status = 200};
-                var result = JsonSerializer.Serialize(problem);
-                await response.WriteAsync(result);
+            switch (error)
+            {
+                case KeyNotFoundException e:
+                    // not found error
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    break;
+                default:
+                    // unhandled error
+                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    break;
             }
+
+            var problem = new ProblemDetails { Status = 200 };
+            var result = JsonSerializer.Serialize(problem);
+            await response.WriteAsync(result);
         }
     }
 }
