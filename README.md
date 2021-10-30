@@ -1,5 +1,5 @@
 ### migrations
-Add migration by going to Infrastructure folder and execute:
+Add migration by going to Data folder and execute:
 dotnet ef migrations add MigrationName --startup-project ../Api/Api.csproj
 
 Run db upgrade:

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Realworlddotnet.Data.Contexts;
 
@@ -10,9 +11,10 @@ using Realworlddotnet.Data.Contexts;
 namespace Realworlddotnet.Infrastructure.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    partial class ConduitContextModelSnapshot : ModelSnapshot
+    [Migration("20211029185229_MigrationName")]
+    partial class MigrationName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0-rc.2.21480.5");

@@ -31,11 +31,14 @@ public class ArticlesHandler : IArticlesHandler
                 newArticle.Title,
                 newArticle.Description,
                 newArticle.Body,
-                user,
-                new List<Comment>(),
                 DateTime.UtcNow,
-                DateTime.UtcNow,
-                tags.ToList())
+                DateTime.UtcNow
+       )
+            {
+                Author = user,
+                Tags = tags.ToList(),
+                Comments = new List<Comment>()
+            }
             ;
 
         _repository.AddArticle(article);
