@@ -124,3 +124,11 @@ csharp_space_between_method_call_empty_parameter_list_parentheses = false
 # Wrapping preferences
 csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
+
+#sonar
+
+# Update this method so that its implementation is not identical to 'blah'
+dotnet_diagnostic.S4144.severity = None
+
+# Move 'blah' into a named namespace.
+dotnet_diagnostic.S3903.severity = None

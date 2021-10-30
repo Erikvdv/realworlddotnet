@@ -1,35 +1,33 @@
 using System;
 
-namespace Realworlddotnet.Core.Entities
+namespace Realworlddotnet.Core.Entities;
+
+public class Comment
 {
-    public class Comment
+    public Comment(int commentId, string body, int authorId, int articleId,
+        DateTime createdAt, DateTime updatedAt)
     {
-        public Comment(int commentId, string body, User author, int authorId, Article article, int articleId, DateTime createdAt, DateTime updatedAt)
-        {
-            CommentId = commentId;
-            Body = body;
-            Author = author;
-            AuthorId = authorId;
-            Article = article;
-            ArticleId = articleId;
-            CreatedAt = createdAt;
-            UpdatedAt = updatedAt;
-        }
-
-        public int CommentId { get; set; }
-
-        public string Body { get; set; }
-
-        public User Author { get; set; }
-
-        public int AuthorId { get; set; }
-
-        public Article Article { get; set; }
-
-        public int ArticleId { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
+        CommentId = commentId;
+        Body = body;
+        AuthorId = authorId;
+        ArticleId = articleId;
+        CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
     }
+
+    public int CommentId { get; set; }
+
+    public string Body { get; set; }
+
+    public User Author { get; set; } = null!;
+
+    public int AuthorId { get; set; }
+
+    public Article Article { get; set; } = null!;
+
+    public int ArticleId { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 }

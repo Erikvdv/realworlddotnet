@@ -1,37 +1,36 @@
 using Realworlddotnet.Core.Dto;
 
-namespace Realworlddotnet.Core.Entities
+namespace Realworlddotnet.Core.Entities;
+
+public class User
 {
-    public class User
+    public User()
     {
-        public User()
-        {
-        }
+    }
 
-        public User(NewUserDto newUser)
-        {
-            Password = newUser.Password;
-            Username = newUser.Username;
-            Email = newUser.Email;
-        }
+    public User(NewUserDto newUser)
+    {
+        Password = newUser.Password;
+        Username = newUser.Username;
+        Email = newUser.Email;
+    }
 
-        public string Username { get; set; } = default!;
+    public string Username { get; set; } = default!;
 
-        public string Email { get; set; } = default!;
+    public string Email { get; set; } = default!;
 
-        public string Password { get; set; } = default!;
+    public string Password { get; set; } = default!;
 
-        public string Bio { get; set; } = string.Empty;
+    public string Bio { get; set; } = string.Empty;
 
-        public string Image { get; set; } = string.Empty;
+    public string Image { get; set; } = string.Empty;
 
-        public void UpdateUser(UpdatedUserDto updatedUser)
-        {
-            Username = updatedUser.Username ?? Username;
-            Email = updatedUser.Email ?? Email;
-            Bio = updatedUser.Bio ?? Bio;
-            Image = updatedUser.Image ?? Image;
-            Password = updatedUser.Password ?? Password;
-        }
+    public void UpdateUser(UpdatedUserDto updatedUser)
+    {
+        Username = updatedUser.Username ?? Username;
+        Email = updatedUser.Email ?? Email;
+        Bio = updatedUser.Bio ?? Bio;
+        Image = updatedUser.Image ?? Image;
+        Password = updatedUser.Password ?? Password;
     }
 }

@@ -6,32 +6,31 @@ using Microsoft.IdentityModel.Tokens;
 using Realworlddotnet.Infrastructure.Utils.Interfaces;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace Realworlddotnet.Infrastructure.Utils
+namespace Realworlddotnet.Infrastructure.Utils;
+
+public class TokenGenerator : ITokenGenerator
 {
-    public class TokenGenerator : ITokenGenerator
+    private readonly RsaSecurityKey? _rsaSecurityKey;
+
+    public TokenGenerator(X509Certificate2 certificate)
     {
-        private readonly RsaSecurityKey? _rsaSecurityKey;
+        var privateKey = certificate.GetRSAPrivateKey();
+        _rsaSecurityKey = new RsaSecurityKey(privateKey);
+    }
 
-        public TokenGenerator(X509Certificate2 certificate)
-        {
-            var privateKey = certificate.GetRSAPrivateKey();
-            _rsaSecurityKey = new RsaSecurityKey(privateKey);
-        }
+    public string CreateToken(string username)
+    {
+        var claims = new[] { new Claim(JwtRegisteredClaimNames.Sub, username) };
 
-        public string CreateToken(string username)
-        {
-            var claims = new[] {new Claim(JwtRegisteredClaimNames.Sub, username)};
+        var handler = new JwtSecurityTokenHandler();
+        var token = new JwtSecurityToken(
+            "theclientid",
+            "https://AAAS_PLATFORM/idp/YOUR_TENANT/authn/token",
+            claims,
+            DateTime.UtcNow.AddMilliseconds(-30),
+            DateTime.UtcNow.AddMinutes(60),
+            new SigningCredentials(_rsaSecurityKey, SecurityAlgorithms.RsaSha256));
 
-            var handler = new JwtSecurityTokenHandler();
-            var token = new JwtSecurityToken(
-                "theclientid",
-                "https://AAAS_PLATFORM/idp/YOUR_TENANT/authn/token",
-                claims,
-                DateTime.UtcNow.AddMilliseconds(-30),
-                DateTime.UtcNow.AddMinutes(60),
-                new SigningCredentials(_rsaSecurityKey, SecurityAlgorithms.RsaSha256));
-
-            return handler.WriteToken(token);
-        }
+        return handler.WriteToken(token);
     }
 }

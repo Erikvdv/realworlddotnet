@@ -2,13 +2,12 @@ using AutoMapper;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
 
-namespace Realworlddotnet.Core.Mappers
+namespace Realworlddotnet.Core.Mappers;
+
+public class MappingProfile : Profile
 {
-    public class MappingProfile : Profile
+    public MappingProfile()
     {
-        public MappingProfile()
-        {
-            CreateMap<User, UserDto>();
-        }
+        CreateMap<User, UserDto>();
     }
 }

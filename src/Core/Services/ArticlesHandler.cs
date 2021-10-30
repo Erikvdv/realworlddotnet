@@ -8,44 +8,46 @@ using Realworlddotnet.Core.Entities;
 using Realworlddotnet.Core.Services.Interfaces;
 using Realworlddotnet.Infrastructure.Utils;
 
-namespace Realworlddotnet.Core.Services
+namespace Realworlddotnet.Core.Services;
+
+public class ArticlesHandler : IArticlesHandler
 {
-    public class ArticlesHandler : IArticlesHandler
+    private readonly IConduitRepository _repository;
+
+    public ArticlesHandler(IConduitRepository repository)
     {
-        private readonly IConduitRepository _repository;
+        _repository = repository;
+    }
 
-        public ArticlesHandler(IConduitRepository repository)
-        {
-            _repository = repository;
-        }
+    public async Task<Article> CreateArticleAsync(
+        NewArticleDto newArticle, string username, CancellationToken cancellationToken)
+    {
+        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+        var tags = await _repository.UpsertTags(newArticle.TagList, cancellationToken);
+        await _repository.SaveChangesAsync();
 
-        public async Task<Article> CreateArticleAsync(
-            NewArticleDto newArticle, string username, CancellationToken cancellationToken)
-        {
-            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-            var tags = await _repository.UpsertTags(newArticle.TagList, cancellationToken);
-            await _repository.SaveChangesAsync();
+        var article = new Article(Guid.Empty,
+                newArticle.Title.GenerateSlug(),
+                newArticle.Title,
+                newArticle.Description,
+                newArticle.Body,
+                DateTime.UtcNow,
+                DateTime.UtcNow
+       )
+            {
+                Author = user,
+                Tags = tags.ToList(),
+                Comments = new List<Comment>()
+            }
+            ;
 
-            var article = new Article(Guid.Empty,
-                    newArticle.Title.GenerateSlug(),
-                    newArticle.Title,
-                    newArticle.Description,
-                    newArticle.Body,
-                    user,
-                    new List<Comment>(),
-                    DateTime.UtcNow,
-                    DateTime.UtcNow, 
-                    tags.ToList())
-                ;
+        _repository.AddArticle(article);
+        await _repository.SaveChangesAsync();
+        return article;
+    }
 
-            _repository.AddArticle(article);
-            await _repository.SaveChangesAsync();
-            return article;
-        }
-
-        public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken)
-        {
-            return _repository.GetArticles(query, cancellationToken);
-        }
+    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken)
+    {
+        return _repository.GetArticles(query, cancellationToken);
     }
 }
