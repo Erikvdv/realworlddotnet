@@ -74,18 +74,20 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpPost("{slug}/favorite")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.AddFavoriteAsync(slug, Username, cancellationToken);
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]
     [HttpDelete("{slug}/favorite")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.DeleteFavorite(slug, Username, cancellationToken);
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]

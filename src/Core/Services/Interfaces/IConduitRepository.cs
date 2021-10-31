@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ public interface IConduitRepository
 
     public Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags, CancellationToken cancellationToken);
 
-    public Task SaveChangesAsync();
+    public Task SaveChangesAsync(CancellationToken cancellationToken);
 
     public Task<ArticlesResponseDto> GetArticles(ArticlesQuery articlesQuery, CancellationToken cancellationToken);
     
@@ -25,4 +26,11 @@ public interface IConduitRepository
     public void AddArticle(Article article);
     
     public void DeleteArticle(Article article);
+    
+    public Task<ArticleFavorite?> GetArticleFavorite(string username, Guid articleId);
+    
+    public void AddArticleFavorite(ArticleFavorite articleFavorite);
+    
+    public void RemoveArticleFavorite(ArticleFavorite articleFavorite);
+    
 }

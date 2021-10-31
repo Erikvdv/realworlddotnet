@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Infrastructure.Utils;
 
@@ -7,18 +8,7 @@ namespace Realworlddotnet.Core.Entities;
 
 public class Article
 {
-    public Article(Guid id, string title, string description, string body, 
-        DateTimeOffset createdAt, DateTimeOffset updatedAt)
-    {
-        Id = id;
-        Slug = title.GenerateSlug();
-        Title = title;
-        Description = description;
-        Body = body;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
-    }
-
+    
     public Guid Id { get; set; }
 
     public string Slug { get; set; }
@@ -31,30 +21,44 @@ public class Article
 
     public User Author { get; set; } = null!;
 
-    public List<Comment> Comments { get; set; } = null!;
-
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset UpdatedAt { get; set; }
+    
+    public bool Favorited { get; set; }
+
+    public int FavoritesCount { get; set; } = 0;
 
     public ICollection<Tag> Tags { get; set; } = null!;
-
+    public List<ArticleComment> Comments { get; set; } = null!;
+    public ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
+    
+    public Article(string title, string description, string body)
+    {
+        Slug = title.GenerateSlug();
+        Title = title;
+        Description = description;
+        Body = body;
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
     public void UpdateArticle(ArticleUpdateDto update)
     {
         if (!string.IsNullOrWhiteSpace(update.Title))
         {
-            this.Title = update.Title;
-            this.Slug = update.Title.GenerateSlug();
+            Title = update.Title;
+            Slug = update.Title.GenerateSlug();
         }
 
         if (!string.IsNullOrWhiteSpace(update.Body))
         {
-            this.Body = update.Body;
+            Body = update.Body;
         }
 
         if (!string.IsNullOrWhiteSpace(update.Description))
         {
-            this.Description = update.Description;
+            Description = update.Description;
         }
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 }

@@ -25,19 +25,17 @@ public class ArticlesHandler : IArticlesHandler
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
         var tags = await _repository.UpsertTags(newArticle.TagList, cancellationToken);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
 
-        var article = new Article(Guid.Empty,
+        var article = new Article(
                 newArticle.Title,
                 newArticle.Description,
-                newArticle.Body,
-                DateTime.UtcNow,
-                DateTime.UtcNow
-            ) { Author = user, Tags = tags.ToList(), Comments = new List<Comment>() }
+                newArticle.Body
+            ) { Author = user, Tags = tags.ToList(), Comments = new List<ArticleComment>() }
             ;
 
         _repository.AddArticle(article);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
         return article;
     }
 
@@ -51,15 +49,15 @@ public class ArticlesHandler : IArticlesHandler
             {
                 Status = 422, Detail = "Article not found"
             });
-        
+
         if (username != article.Author.Username)
             throw new ProblemDetailsException(new ValidationProblemDetails
             {
                 Status = 403, Detail = $"{username} is not the author"
             });
-        
+
         article.UpdateArticle(update);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
         return article;
     }
 
@@ -72,15 +70,15 @@ public class ArticlesHandler : IArticlesHandler
             {
                 Status = 422, Detail = "Article not found"
             });
-        
+
         if (username != article.Author.Username)
             throw new ProblemDetailsException(new ValidationProblemDetails
             {
                 Status = 403, Detail = $"{username} is not the author"
             });
-        
+
         _repository.DeleteArticle(article);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
     }
 
     public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken)
@@ -96,10 +94,66 @@ public class ArticlesHandler : IArticlesHandler
         {
             throw new ProblemDetailsException(new ValidationProblemDetails
             {
-                Status = 422, Detail = "Article nog found"
+                Status = 422,
+                Detail = "Article not found",
+                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
             });
         }
 
         return article;
+    }
+
+    public async Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken)
+    {
+        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+        if (article == null)
+        {
+            throw new ProblemDetailsException(new ValidationProblemDetails
+            {
+                Status = 422,
+                Detail = "Article not found",
+                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+            });
+        }
+
+        var articleFavorite = await _repository.GetArticleFavorite(user.Username, article.Id);
+
+        if (articleFavorite is null)
+        {
+            _repository.AddArticleFavorite(new ArticleFavorite(user.Username, article.Id));
+            await _repository.SaveChangesAsync(cancellationToken);
+        }
+
+        article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+        return article!;
+    }
+
+    public async Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken)
+    {
+        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+        if (article == null)
+        {
+            throw new ProblemDetailsException(new ValidationProblemDetails
+            {
+                Status = 422,
+                Detail = "Article not found",
+                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+            });
+        }
+
+        var articleFavorite = await _repository.GetArticleFavorite(user.Username, article.Id);
+
+        if (articleFavorite is not null)
+        {
+            _repository.RemoveArticleFavorite(articleFavorite);
+            await _repository.SaveChangesAsync(cancellationToken);
+        }
+
+        article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+        return article!;
     }
 }

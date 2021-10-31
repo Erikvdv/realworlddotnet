@@ -6,22 +6,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Realworlddotnet.Data.Contexts;
 
-namespace Realworlddotnet.Infrastructure.Migrations
+#nullable disable
+
+namespace Realworlddotnet.Data.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    [Migration("20210801161008_Tags")]
-    partial class Tags
+    [Migration("20211031195611_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.4");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.0-rc.2.21480.5");
 
             modelBuilder.Entity("ArticleTag", b =>
                 {
-                    b.Property<int>("ArticlesId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ArticlesId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TagsId")
                         .HasColumnType("TEXT");
@@ -33,20 +34,21 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.ToTable("ArticleTag");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Article", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.Article", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AuthorUsername")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -61,7 +63,7 @@ namespace Realworlddotnet.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -73,17 +75,14 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.ToTable("Articles");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.ArticleComment", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AuthorUsername")
                         .IsRequired()
@@ -93,22 +92,41 @@ namespace Realworlddotnet.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("CommentId");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ArticleId");
 
                     b.HasIndex("AuthorUsername");
 
-                    b.ToTable("Comment");
+                    b.ToTable("ArticleComment");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Tag", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.ArticleFavorite", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ArticleId", "Username");
+
+                    b.HasIndex("Username");
+
+                    b.ToTable("ArticleFavorite");
+                });
+
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.Tag", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -118,7 +136,7 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.User", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.User", b =>
                 {
                     b.Property<string>("Username")
                         .HasColumnType("TEXT");
@@ -149,38 +167,40 @@ namespace Realworlddotnet.Infrastructure.Migrations
 
             modelBuilder.Entity("ArticleTag", b =>
                 {
-                    b.HasOne("realworlddotnet.Domain.Entities.Article", null)
+                    b.HasOne("Realworlddotnet.Core.Entities.Article", null)
                         .WithMany()
                         .HasForeignKey("ArticlesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("realworlddotnet.Domain.Entities.Tag", null)
+                    b.HasOne("Realworlddotnet.Core.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Article", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.Article", b =>
                 {
-                    b.HasOne("realworlddotnet.Domain.Entities.User", "Author")
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorUsername");
+                        .HasForeignKey("AuthorUsername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.ArticleComment", b =>
                 {
-                    b.HasOne("realworlddotnet.Domain.Entities.Article", "Article")
+                    b.HasOne("Realworlddotnet.Core.Entities.Article", "Article")
                         .WithMany("Comments")
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("realworlddotnet.Domain.Entities.User", "Author")
-                        .WithMany()
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "Author")
+                        .WithMany("Comments")
                         .HasForeignKey("AuthorUsername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -190,8 +210,36 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("realworlddotnet.Domain.Entities.Article", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.ArticleFavorite", b =>
                 {
+                    b.HasOne("Realworlddotnet.Core.Entities.Article", "Article")
+                        .WithMany("ArticleFavorite")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "User")
+                        .WithMany("ArticleFavorites")
+                        .HasForeignKey("Username")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.Article", b =>
+                {
+                    b.Navigation("ArticleFavorite");
+
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.User", b =>
+                {
+                    b.Navigation("ArticleFavorites");
+
                     b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618

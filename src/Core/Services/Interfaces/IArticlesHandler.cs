@@ -18,5 +18,9 @@ public interface IArticlesHandler
     public Task<ArticlesResponseDto> GetArticlesAsync(
         ArticlesQuery query, CancellationToken cancellationToken);
 
-    Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken);
+    public Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken);
+
+    public Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken);
+
+    public Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken);
 }

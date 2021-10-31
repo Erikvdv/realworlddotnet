@@ -23,8 +23,8 @@ public static class ArticlesMapper
                 author.Image,
                 author.Bio,
                 false),
-            false,
-            0);
+            article.Favorited,
+            article.FavoritesCount);
         return result;
     }
 

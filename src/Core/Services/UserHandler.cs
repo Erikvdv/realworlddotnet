@@ -26,7 +26,7 @@ public class UserHandler : IUserHandler
     {
         var user = new User(newUser);
         await _repository.AddUserAsync(user);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
         var token = _tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }
@@ -36,7 +36,7 @@ public class UserHandler : IUserHandler
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
         user.UpdateUser(updatedUser);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
         var token = _tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }

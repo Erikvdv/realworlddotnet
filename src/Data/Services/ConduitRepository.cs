@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -73,9 +74,9 @@ public class ConduitRepository : IConduitRepository
         return _context.Tags;
     }
 
-    public async Task SaveChangesAsync()
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<ArticlesResponseDto> GetArticles(
@@ -106,17 +107,24 @@ public class ConduitRepository : IConduitRepository
         return new ArticlesResponseDto(page, total);
     }
 
-    public Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, CancellationToken cancellationToken)
+    public async Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, CancellationToken cancellationToken)
     {
         var query = _context.Articles
             .Include(x => x.Author)
             .Include(x => x.Tags);
-
+            
         if (asNoTracking)
             query.AsNoTracking();
 
-        return query
+        var article = await query
             .FirstOrDefaultAsync(x => x.Slug == slug, cancellationToken: cancellationToken);
+
+        if (article == null) return article;
+        
+        var favoriteCount = await _context.ArticleFavorite.CountAsync(x => x.ArticleId == article.Id);
+        article.Favorited = favoriteCount > 0;
+        article.FavoritesCount = favoriteCount;
+        return article;
     }
 
     public void AddArticle(Article article)
@@ -127,5 +135,21 @@ public class ConduitRepository : IConduitRepository
     public void DeleteArticle(Article article)
     {
         _context.Articles.Remove(article);
+    }
+
+    public async Task<ArticleFavorite?> GetArticleFavorite(string username, Guid articleId)
+    {
+        return await _context.ArticleFavorite.FirstOrDefaultAsync(x =>
+            x.Username == username && x.ArticleId == articleId);
+    }
+    
+    public void AddArticleFavorite(ArticleFavorite articleFavorite)
+    {
+        _context.ArticleFavorite.Add(articleFavorite);
+    }
+    
+    public void RemoveArticleFavorite(ArticleFavorite articleFavorite)
+    {
+        _context.ArticleFavorite.Remove(articleFavorite);
     }
 }
