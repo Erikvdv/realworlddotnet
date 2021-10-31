@@ -1,4 +1,3 @@
-using System.Linq;
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;

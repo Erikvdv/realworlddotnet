@@ -13,6 +13,7 @@ namespace Realworlddotnet.Api.Controllers;
 public class ArticlesController : ControllerBase
 {
     private readonly IArticlesHandler _articlesHandler;
+    private string Username => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     public ArticlesController(IArticlesHandler articlesHandler)
     {
@@ -25,9 +26,8 @@ public class ArticlesController : ControllerBase
         RequestEnvelope<ArticleEnvelope<NewArticleDto>> request,
         CancellationToken cancellationToken)
     {
-        var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var article =
-            await _articlesHandler.CreateArticleAsync(request.Body.Article, username, cancellationToken);
+            await _articlesHandler.CreateArticleAsync(request.Body.Article, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }
@@ -42,7 +42,8 @@ public class ArticlesController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug, CancellationToken cancellationToken)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
         var article = await _articlesHandler.GetArticleBySlugAsync(slug, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
@@ -51,10 +52,16 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpPut("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UpdateBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UpdateBySlugAsync(string slug,
+        RequestEnvelope<ArticleEnvelope<ArticleUpdateDto>> request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.UpdateArticleAsync(request.Body.Article,
+            slug,
+            Username,
+            cancellationToken);
+
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]

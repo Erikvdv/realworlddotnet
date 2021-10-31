@@ -13,15 +13,13 @@ namespace Realworlddotnet.Core.Services;
 
 public class UserHandler : IUserHandler
 {
-    private readonly IMapper _mapper;
     private readonly IConduitRepository _repository;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator, IMapper mapper)
+    public UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator)
     {
         _repository = repository;
         _tokenGenerator = tokenGenerator;
-        _mapper = mapper;
     }
 
     public async Task<UserDto> CreateAsync(NewUserDto newUser, CancellationToken cancellationToken)

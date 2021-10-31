@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Infrastructure.Utils;
 
 namespace Realworlddotnet.Core.Entities;
 
 public class Article
 {
-    public Article(Guid id, string slug, string title, string description, string body, 
+    public Article(Guid id, string title, string description, string body, 
         DateTimeOffset createdAt, DateTimeOffset updatedAt)
     {
         Id = id;
-        Slug = slug;
+        Slug = title.GenerateSlug();
         Title = title;
         Description = description;
         Body = body;
@@ -36,4 +38,23 @@ public class Article
     public DateTimeOffset UpdatedAt { get; set; }
 
     public ICollection<Tag> Tags { get; set; } = null!;
+
+    public void UpdateArticle(ArticleUpdateDto update)
+    {
+        if (!string.IsNullOrWhiteSpace(update.Title))
+        {
+            this.Title = update.Title;
+            this.Slug = update.Title.GenerateSlug();
+        }
+
+        if (!string.IsNullOrWhiteSpace(update.Body))
+        {
+            this.Body = update.Body;
+        }
+
+        if (!string.IsNullOrWhiteSpace(update.Description))
+        {
+            this.Description = update.Description;
+        }
+    }
 }

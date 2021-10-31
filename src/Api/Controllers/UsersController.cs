@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Services.Interfaces;
@@ -12,12 +9,10 @@ namespace Realworlddotnet.Api.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly ILogger<UsersController> _logger;
     private readonly IUserHandler _userHandler;
 
-    public UsersController(ILogger<UsersController> logger, IUserHandler userHandler)
+    public UsersController(IUserHandler userHandler)
     {
-        _logger = logger;
         _userHandler = userHandler;
     }
 
