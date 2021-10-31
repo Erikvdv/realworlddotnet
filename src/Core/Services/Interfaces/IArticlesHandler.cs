@@ -12,4 +12,6 @@ public interface IArticlesHandler
 
     public Task<ArticlesResponseDto> GetArticlesAsync(
         ArticlesQuery query, CancellationToken cancellationToken);
+
+    Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken);
 }

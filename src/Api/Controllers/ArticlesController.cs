@@ -1,7 +1,4 @@
-using System;
 using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Realworlddotnet.Api.Mappers;
@@ -45,10 +42,11 @@ public class ArticlesController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.GetArticleBySlugAsync(slug, cancellationToken);
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
 using Realworlddotnet.Core.Services.Interfaces;
@@ -49,5 +51,21 @@ public class ArticlesHandler : IArticlesHandler
     public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken)
     {
         return _repository.GetArticles(query, cancellationToken);
+    }
+    
+    public async Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken)
+    {
+        var article = await _repository.GetArticleBySlugAsync(slug, cancellationToken);
+
+        if (article == null)
+        {
+            throw new ProblemDetailsException(new ValidationProblemDetails
+            {
+                Status = 422,
+                Detail = "Article nog found"
+            });
+        }
+
+        return article;
     }
 }

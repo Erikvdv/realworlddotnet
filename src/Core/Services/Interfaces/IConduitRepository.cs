@@ -19,6 +19,8 @@ public interface IConduitRepository
     public Task SaveChangesAsync();
 
     public Task<ArticlesResponseDto> GetArticles(ArticlesQuery articlesQuery, CancellationToken cancellationToken);
+    
+    public Task<Article?> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken);
 
     public void AddArticle(Article article);
 }

@@ -105,6 +105,16 @@ public class ConduitRepository : IConduitRepository
         return new ArticlesResponseDto(page, total);
     }
 
+    public Task<Article?> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken)
+    {
+        return _context.Articles
+            .Include(x => x.Author)
+            .Include(x => x.Tags)     
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Slug == slug, cancellationToken: cancellationToken);
+    
+    }
+
     public void AddArticle(Article article)
     {
         _context.Articles.Add(article);
