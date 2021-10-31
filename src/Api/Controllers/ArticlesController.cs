@@ -66,10 +66,10 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpDelete("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        await _articlesHandler.DeleteArticleAsync(slug, Username, cancellationToken);
+        return Ok();
     }
 
     [Authorize]

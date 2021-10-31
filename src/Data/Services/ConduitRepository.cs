@@ -123,4 +123,9 @@ public class ConduitRepository : IConduitRepository
     {
         _context.Articles.Add(article);
     }
+
+    public void DeleteArticle(Article article)
+    {
+        _context.Articles.Remove(article);
+    }
 }

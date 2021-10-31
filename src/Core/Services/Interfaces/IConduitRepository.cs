@@ -23,4 +23,6 @@ public interface IConduitRepository
     public Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, CancellationToken cancellationToken);
 
     public void AddArticle(Article article);
+    
+    public void DeleteArticle(Article article);
 }

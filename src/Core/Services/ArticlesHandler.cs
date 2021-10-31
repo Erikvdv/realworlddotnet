@@ -63,6 +63,26 @@ public class ArticlesHandler : IArticlesHandler
         return article;
     }
 
+    public async Task DeleteArticleAsync(string slug, string username, CancellationToken cancellationToken)
+    {
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+        if (article == null)
+            throw new ProblemDetailsException(new ValidationProblemDetails
+            {
+                Status = 422, Detail = "Article not found"
+            });
+        
+        if (username != article.Author.Username)
+            throw new ProblemDetailsException(new ValidationProblemDetails
+            {
+                Status = 403, Detail = $"{username} is not the author"
+            });
+        
+        _repository.DeleteArticle(article);
+        await _repository.SaveChangesAsync();
+    }
+
     public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken)
     {
         return _repository.GetArticles(query, cancellationToken);

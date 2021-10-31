@@ -13,6 +13,8 @@ public interface IArticlesHandler
     public Task<Article> UpdateArticleAsync(
         ArticleUpdateDto update, string slug, string username, CancellationToken cancellationToken);
 
+    public Task DeleteArticleAsync(string slug, string username, CancellationToken cancellationToken);
+
     public Task<ArticlesResponseDto> GetArticlesAsync(
         ArticlesQuery query, CancellationToken cancellationToken);
 
