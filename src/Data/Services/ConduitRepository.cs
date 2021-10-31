@@ -48,7 +48,7 @@ public class ConduitRepository : IConduitRepository
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+        return await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
     }
 
 
@@ -98,7 +98,8 @@ public class ConduitRepository : IConduitRepository
         var pageQuery = query
             .Skip(articlesQuery.Offset).Take(articlesQuery.Limit)
             .Include(x => x.Author)
-            .Include(x => x.Tags);
+            .Include(x => x.Tags)
+            .AsNoTracking();
 
         var page = await pageQuery.ToListAsync(cancellationToken);
 
