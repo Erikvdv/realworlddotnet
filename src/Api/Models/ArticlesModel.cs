@@ -2,6 +2,13 @@ namespace Realworlddotnet.Api.Models;
 
 public record ArticleEnvelope<T>(T Article);
 
+public record CommentEnvelope<T>(T comment);
+
+public record Comment(int Id,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt,
+    string Body,
+    Author Author);
 
 public record Author(string Username, string Image, string Bio, bool Following);
 

@@ -121,7 +121,7 @@ public class ConduitRepository : IConduitRepository
 
         if (article == null) return article;
         
-        var favoriteCount = await _context.ArticleFavorite.CountAsync(x => x.ArticleId == article.Id);
+        var favoriteCount = await _context.ArticleFavorites.CountAsync(x => x.ArticleId == article.Id);
         article.Favorited = favoriteCount > 0;
         article.FavoritesCount = favoriteCount;
         return article;
@@ -139,17 +139,22 @@ public class ConduitRepository : IConduitRepository
 
     public async Task<ArticleFavorite?> GetArticleFavorite(string username, Guid articleId)
     {
-        return await _context.ArticleFavorite.FirstOrDefaultAsync(x =>
+        return await _context.ArticleFavorites.FirstOrDefaultAsync(x =>
             x.Username == username && x.ArticleId == articleId);
     }
     
     public void AddArticleFavorite(ArticleFavorite articleFavorite)
     {
-        _context.ArticleFavorite.Add(articleFavorite);
+        _context.ArticleFavorites.Add(articleFavorite);
+    }
+    
+    public void AddArticleComment(Comment comment)
+    {
+        _context.Comments.Add(comment);
     }
     
     public void RemoveArticleFavorite(ArticleFavorite articleFavorite)
     {
-        _context.ArticleFavorite.Remove(articleFavorite);
+        _context.ArticleFavorites.Remove(articleFavorite);
     }
 }

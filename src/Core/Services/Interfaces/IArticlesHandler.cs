@@ -20,6 +20,9 @@ public interface IArticlesHandler
 
     public Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken);
 
+    public Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
+        CancellationToken cancellationToken);
+
     public Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken);
 
     public Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken);

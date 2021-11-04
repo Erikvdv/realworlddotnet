@@ -8,9 +8,9 @@ public class ArticleFavorite
     
     public Guid ArticleId { get; set; }
 
-    public User User { get;  set; }
+    public User User { get;  set; } = null!;
     
-    public Article Article { get; set; }
+    public Article Article { get; set; } = null!;
     
     public ArticleFavorite(string username, Guid articleId)
     {

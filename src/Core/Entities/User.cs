@@ -27,7 +27,7 @@ public class User
     public string Image { get; set; } = string.Empty;
     
     public ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
-    public ICollection<ArticleComment>? Comments { get; set; }
+    public ICollection<Comment>? ArticleComments { get; set; }
 
     public void UpdateUser(UpdatedUserDto updatedUser)
     {

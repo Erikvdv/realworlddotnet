@@ -31,7 +31,7 @@ public class ArticlesHandler : IArticlesHandler
                 newArticle.Title,
                 newArticle.Description,
                 newArticle.Body
-            ) { Author = user, Tags = tags.ToList(), Comments = new List<ArticleComment>() }
+            ) { Author = user, Tags = tags.ToList() }
             ;
 
         _repository.AddArticle(article);
@@ -101,6 +101,30 @@ public class ArticlesHandler : IArticlesHandler
         }
 
         return article;
+    }
+    
+    public async Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
+        CancellationToken cancellationToken)
+    {
+        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+        if (article == null)
+        {
+            throw new ProblemDetailsException(new ValidationProblemDetails
+            {
+                Status = 422,
+                Detail = "Article not found",
+                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+            });
+        }
+        
+        var comment = new Comment(commentDto.body, user.Username, article.Id);
+        _repository.AddArticleComment(comment);
+        
+        await _repository.SaveChangesAsync(cancellationToken);
+        return comment;
+
+
     }
 
     public async Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken)

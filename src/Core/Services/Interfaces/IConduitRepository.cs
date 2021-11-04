@@ -26,6 +26,7 @@ public interface IConduitRepository
     public void AddArticle(Article article);
     
     public void DeleteArticle(Article article);
+    public void AddArticleComment(Comment comment);
     
     public Task<ArticleFavorite?> GetArticleFavorite(string username, Guid articleId);
     

@@ -29,9 +29,10 @@ public class Article
 
     public int FavoritesCount { get; set; } = 0;
 
-    public ICollection<Tag> Tags { get; set; } = null!;
-    public List<ArticleComment> Comments { get; set; } = null!;
-    public ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
+    public ICollection<Tag>? Tags { get; set; }
+    
+    public List<Comment> Comments { get; set; } = new List<Comment>();
+    public ICollection<ArticleFavorite> ArticleFavorites { get; set; } = new List<ArticleFavorite>();
     
     public Article(string title, string description, string body)
     {
