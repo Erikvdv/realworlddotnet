@@ -165,4 +165,9 @@ public class ConduitRepository : IConduitRepository
     {
         _context.ArticleFavorites.Remove(articleFavorite);
     }
+
+    public Task<List<Tag>> GetTags(CancellationToken cancellationToken)
+    {
+        return _context.Tags.AsNoTracking().ToListAsync(cancellationToken);
+    }
 }

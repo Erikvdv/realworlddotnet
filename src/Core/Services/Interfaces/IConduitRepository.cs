@@ -34,5 +34,7 @@ public interface IConduitRepository
     public void AddArticleFavorite(ArticleFavorite articleFavorite);
     
     public void RemoveArticleFavorite(ArticleFavorite articleFavorite);
-    
+
+    public Task<List<Tag>> GetTags(CancellationToken cancellationToken);
+
 }

@@ -30,4 +30,6 @@ public interface IArticlesHandler
     public Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken);
 
     public Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken);
+    
+    public Task<string[]> GetTags(CancellationToken cancellationToken);
 }

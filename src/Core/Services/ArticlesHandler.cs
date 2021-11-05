@@ -190,4 +190,10 @@ public class ArticlesHandler : IArticlesHandler
         article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
         return article!;
     }
+
+    public async Task<string[]> GetTags(CancellationToken cancellationToken)
+    {
+        var tags = await _repository.GetTags(cancellationToken);
+        return tags.Select(x => x.Id).ToArray();
+    }
 }
