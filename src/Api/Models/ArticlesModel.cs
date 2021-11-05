@@ -3,6 +3,7 @@ namespace Realworlddotnet.Api.Models;
 public record ArticleEnvelope<T>(T Article);
 
 public record CommentEnvelope<T>(T comment);
+public record CommentsEnvelope<T>(T comments);
 
 public record Comment(int Id,
     DateTimeOffset CreatedAt,

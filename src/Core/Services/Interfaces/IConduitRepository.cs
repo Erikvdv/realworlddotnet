@@ -27,6 +27,7 @@ public interface IConduitRepository
     
     public void DeleteArticle(Article article);
     public void AddArticleComment(Comment comment);
+    public Task<List<Comment>> GetCommentsBySlugAsync(string slug, CancellationToken cancellationToken);
     
     public Task<ArticleFavorite?> GetArticleFavorite(string username, Guid articleId);
     

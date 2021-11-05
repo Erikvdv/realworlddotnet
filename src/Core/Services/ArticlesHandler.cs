@@ -123,8 +123,18 @@ public class ArticlesHandler : IArticlesHandler
         
         await _repository.SaveChangesAsync(cancellationToken);
         return comment;
+    }
 
-
+    public async Task<List<Comment>> GetCommentsAsync(string slug, string? username,
+        CancellationToken cancellationToken)
+    {
+        if (username is not null)
+        {
+            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+        }
+        
+        var comments = await _repository.GetCommentsBySlugAsync(slug, cancellationToken);
+        return comments;
     }
 
     public async Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken)

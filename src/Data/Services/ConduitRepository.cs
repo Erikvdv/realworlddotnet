@@ -153,6 +153,14 @@ public class ConduitRepository : IConduitRepository
         _context.Comments.Add(comment);
     }
     
+    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, CancellationToken cancellationToken)
+    {
+        return await _context.Comments.Where(x => x.Article.Slug == slug)
+            .Include(x => x.Author)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+    
     public void RemoveArticleFavorite(ArticleFavorite articleFavorite)
     {
         _context.ArticleFavorites.Remove(articleFavorite);

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Realworlddotnet.Api.Mappers;
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Core.Entities;
 using Realworlddotnet.Core.Services.Interfaces;
 using Comment = Realworlddotnet.Api.Models.Comment;
 
@@ -106,15 +105,16 @@ public class ArticlesController : ControllerBase
         RequestEnvelope<CommentEnvelope<CommentDto>> request, CancellationToken cancellationToken)
     {
         var result = await _articlesHandler.AddCommentAsync(slug, Username, request.Body.comment, cancellationToken);
-        var comment = ArticlesMapper.MapFromCommentEntity(result);
+        var comment = CommentMapper.MapFromCommentEntity(result);
         return new CommentEnvelope<Comment>(comment);
     }
 
     [HttpGet("{slug}/comments")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug)
+    public async Task<ActionResult<CommentsEnvelope<List<Comment>>>> GetCommentAsync(string slug, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var result = await _articlesHandler.GetCommentsAsync(slug, Username, cancellationToken);
+        var comments = result.Select(CommentMapper.MapFromCommentEntity);
+        return new CommentsEnvelope<List<Comment>>(comments.ToList());
     }
 
     [Authorize]

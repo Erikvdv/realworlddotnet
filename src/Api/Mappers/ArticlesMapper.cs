@@ -1,8 +1,6 @@
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
-using CommentEntity = Realworlddotnet.Core.Entities.Comment;
-using CommentModel = Realworlddotnet.Api.Models.Comment;
 
 namespace Realworlddotnet.Api.Mappers;
 
@@ -10,7 +8,7 @@ public static class ArticlesMapper
 {
     public static ArticleResponse MapFromArticleEntity(Article article)
     {
-        var tags = article.Tags.Select(tag => tag.Id);
+        var tags = article.Tags?.Select(tag => tag.Id);
         var author = article.Author;
         var result = new ArticleResponse(
             article.Slug,
@@ -19,7 +17,7 @@ public static class ArticlesMapper
             article.Body,
             article.CreatedAt,
             article.UpdatedAt,
-            tags,
+            tags ?? new List<string>(),
             new Author(
                 author.Username,
                 author.Image,
@@ -38,17 +36,5 @@ public static class ArticlesMapper
         return new ArticlesResponse(articles, articlesResponseDto.ArticlesCount);
     }
     
-    public static CommentModel MapFromCommentEntity(CommentEntity commentEntity)
-    {
-        var author = new Author(
-            commentEntity.Author.Username,
-            commentEntity.Author.Image,
-            commentEntity.Author.Bio,
-            false);
-        return new CommentModel(commentEntity.Id,
-            commentEntity.CreatedAt,
-            commentEntity.UpdatedAt,
-            commentEntity.Body,
-            author);
-    }
+    
 }
