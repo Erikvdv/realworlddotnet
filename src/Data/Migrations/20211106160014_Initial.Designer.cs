@@ -11,7 +11,7 @@ using Realworlddotnet.Data.Contexts;
 namespace Realworlddotnet.Data.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    [Migration("20211104201237_Initial")]
+    [Migration("20211106160014_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,6 +123,21 @@ namespace Realworlddotnet.Data.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.FollowedUser", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FollowerUsername")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Username", "FollowerUsername");
+
+                    b.HasIndex("FollowerUsername");
+
+                    b.ToTable("FollowedUsers");
+                });
+
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Tag", b =>
                 {
                     b.Property<string>("Id")
@@ -226,6 +241,25 @@ namespace Realworlddotnet.Data.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.FollowedUser", b =>
+                {
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "FollowerUser")
+                        .WithMany("FollowedUsers")
+                        .HasForeignKey("FollowerUsername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "User")
+                        .WithMany("Followers")
+                        .HasForeignKey("Username")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FollowerUser");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Article", b =>
                 {
                     b.Navigation("ArticleFavorites");
@@ -238,6 +272,10 @@ namespace Realworlddotnet.Data.Migrations
                     b.Navigation("ArticleComments");
 
                     b.Navigation("ArticleFavorites");
+
+                    b.Navigation("FollowedUsers");
+
+                    b.Navigation("Followers");
                 });
 #pragma warning restore 612, 618
         }

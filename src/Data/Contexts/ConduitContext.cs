@@ -13,6 +13,8 @@ public class ConduitContext : DbContext
     public DbSet<Article> Articles { get; set; } = null!;
     public DbSet<Comment> Comments { get; set; } = null!;
     public DbSet<Tag> Tags { get; set; } = null!;
+    
+    public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
 
     public DbSet<ArticleFavorite> ArticleFavorites { get; set; } = null!;
 
@@ -51,6 +53,18 @@ public class ConduitContext : DbContext
             entity.HasOne(x => x.Author)
                 .WithMany(x => x.ArticleComments)
                 .HasForeignKey(x => x.Username);
+        });
+        
+        modelBuilder.Entity<FollowedUser>(entity =>
+        {
+            entity.HasKey(x => new { x.Username, x.FollowerUsername });
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Followers)
+                .HasForeignKey(x => x.Username);
+              
+            entity.HasOne(x => x.FollowerUser)
+                .WithMany(x => x.FollowedUsers)
+                .HasForeignKey(x => x.FollowerUsername);
         });
     }
 }

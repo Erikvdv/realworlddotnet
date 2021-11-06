@@ -58,7 +58,7 @@ public class ConduitRepository : IConduitRepository
         return _context.Users.FirstAsync(x => x.Username == username, cancellationToken);
     }
 
-    public async Task<IEnumerable<Tag>> UpsertTags(IEnumerable<string> tags,
+    public async Task<IEnumerable<Tag>> UpsertTagsAsync(IEnumerable<string> tags,
         CancellationToken cancellationToken)
     {
         var dbTags = await _context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken);
@@ -79,7 +79,7 @@ public class ConduitRepository : IConduitRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<ArticlesResponseDto> GetArticles(
+    public async Task<ArticlesResponseDto> GetArticlesAsync(
         ArticlesQuery articlesQuery,
         CancellationToken cancellationToken)
     {
@@ -111,7 +111,8 @@ public class ConduitRepository : IConduitRepository
     {
         var query = _context.Articles
             .Include(x => x.Author)
-            .Include(x => x.Tags);
+            .Include(x => x.Tags)
+            .Include(x => x.Comments);
             
         if (asNoTracking)
             query.AsNoTracking();
@@ -137,7 +138,7 @@ public class ConduitRepository : IConduitRepository
         _context.Articles.Remove(article);
     }
 
-    public async Task<ArticleFavorite?> GetArticleFavorite(string username, Guid articleId)
+    public async Task<ArticleFavorite?> GetArticleFavoriteAsync(string username, Guid articleId)
     {
         return await _context.ArticleFavorites.FirstOrDefaultAsync(x =>
             x.Username == username && x.ArticleId == articleId);
@@ -153,6 +154,11 @@ public class ConduitRepository : IConduitRepository
         _context.Comments.Add(comment);
     }
     
+    public void RemoveArticleComment(Comment comment)
+    {
+        _context.Comments.Remove(comment);
+    }
+    
     public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, CancellationToken cancellationToken)
     {
         return await _context.Comments.Where(x => x.Article.Slug == slug)
@@ -166,8 +172,25 @@ public class ConduitRepository : IConduitRepository
         _context.ArticleFavorites.Remove(articleFavorite);
     }
 
-    public Task<List<Tag>> GetTags(CancellationToken cancellationToken)
+    public Task<List<Tag>> GetTagsAsync(CancellationToken cancellationToken)
     {
         return _context.Tags.AsNoTracking().ToListAsync(cancellationToken);
+    }
+
+    public Task<bool> IsFollowingAsync(string username, string followerUsername, CancellationToken cancellationToken)
+    {
+        return _context.FollowedUsers.AnyAsync(
+            x => x.Username == username && x.FollowerUsername == followerUsername,
+            cancellationToken: cancellationToken);
+    }
+
+    public void Follow(string username, string followerUsername)
+    {
+        _context.FollowedUsers.Add(new FollowedUser(username, followerUsername));
+    }
+
+    public void UnFollow(string username, string followerUsername)
+    {
+        _context.FollowedUsers.Remove(new FollowedUser(username, followerUsername));
     }
 }

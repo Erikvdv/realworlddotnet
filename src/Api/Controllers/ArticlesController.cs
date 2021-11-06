@@ -119,9 +119,9 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpDelete("{slug}/comments/{commentId}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, string commentId)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, int commentId, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        await _articlesHandler.RemoveCommentAsync(slug, commentId, Username, cancellationToken);
+        return Ok();
     }
 }

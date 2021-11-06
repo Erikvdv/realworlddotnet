@@ -23,6 +23,9 @@ public interface IArticlesHandler
 
     public Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
         CancellationToken cancellationToken);
+    
+    public Task RemoveCommentAsync(string slug, int commentId, string username,
+        CancellationToken cancellationToken);
 
     public Task<List<Comment>> GetCommentsAsync(string slug, string? username,
         CancellationToken cancellationToken);

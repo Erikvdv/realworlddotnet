@@ -28,6 +28,10 @@ public class User
     
     public ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
     public ICollection<Comment>? ArticleComments { get; set; }
+    
+    public ICollection<FollowedUser>? Followers { get; set; }
+    
+    public ICollection<FollowedUser>? FollowedUsers { get; set; }
 
     public void UpdateUser(UpdatedUserDto updatedUser)
     {

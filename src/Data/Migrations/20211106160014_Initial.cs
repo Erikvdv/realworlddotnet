@@ -60,6 +60,30 @@ namespace Realworlddotnet.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FollowedUsers",
+                columns: table => new
+                {
+                    Username = table.Column<string>(type: "TEXT", nullable: false),
+                    FollowerUsername = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FollowedUsers", x => new { x.Username, x.FollowerUsername });
+                    table.ForeignKey(
+                        name: "FK_FollowedUsers_Users_FollowerUsername",
+                        column: x => x.FollowerUsername,
+                        principalTable: "Users",
+                        principalColumn: "Username",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FollowedUsers_Users_Username",
+                        column: x => x.Username,
+                        principalTable: "Users",
+                        principalColumn: "Username",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ArticleFavorites",
                 columns: table => new
                 {
@@ -168,6 +192,11 @@ namespace Realworlddotnet.Data.Migrations
                 column: "Username");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FollowedUsers_FollowerUsername",
+                table: "FollowedUsers",
+                column: "FollowerUsername");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -184,6 +213,9 @@ namespace Realworlddotnet.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "FollowedUsers");
 
             migrationBuilder.DropTable(
                 name: "Tags");

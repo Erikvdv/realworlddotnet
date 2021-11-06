@@ -51,6 +51,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IConduitRepository, ConduitRepository>();
 builder.Services.AddScoped<IUserHandler, UserHandler>();
 builder.Services.AddScoped<IArticlesHandler, ArticlesHandler>();
+builder.Services.AddScoped<IProfilesHandler, ProfilesHandler>();
 builder.Services.AddSingleton<CertificateProvider>();
 
 builder.Services.AddSingleton<ITokenGenerator>(container =>
