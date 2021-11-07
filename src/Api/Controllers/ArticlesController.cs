@@ -46,7 +46,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug,
         CancellationToken cancellationToken)
     {
-        var article = await _articlesHandler.GetArticleBySlugAsync(slug, cancellationToken);
+        var article = await _articlesHandler.GetArticleBySlugAsync(slug, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }

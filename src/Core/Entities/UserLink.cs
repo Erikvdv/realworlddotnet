@@ -1,6 +1,6 @@
 namespace Realworlddotnet.Core.Entities;
 
-public class FollowedUser
+public class UserLink
 {
     public string Username { get;  set; }
     
@@ -9,7 +9,7 @@ public class FollowedUser
     public User User { get;  set; } = null!;
     public User FollowerUser { get;  set; } = null!;
     
-    public FollowedUser(string username, string followerUsername)
+    public UserLink(string username, string followerUsername)
     {
         Username = username;
         FollowerUsername = followerUsername;

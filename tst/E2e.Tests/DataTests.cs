@@ -136,7 +136,8 @@ public class DataTests
         const string username2 = "ACM";
 
         var user1 = new User(new NewUserDto(username1, "test1@test.com", "Test1234"));
-
+        var user2 = new User(new NewUserDto(username2, "test2@test.com", "Test1234"));
+        
         var article1 = new Article("title1", "description1", "body1");
 
 
@@ -154,8 +155,12 @@ public class DataTests
             await using (var context = new ConduitContext(contextOptions))
             {
                 await context.Database.EnsureCreatedAsync();
-                context.Users.AddRange(user1);
+                context.Users.AddRange(user1, user2);
                 await context.SaveChangesAsync(CancellationToken.None);
+                
+                var repo = new ConduitRepository(context);
+                repo.Follow(username1, username2);
+                await repo.SaveChangesAsync(CancellationToken.None);
             }
 
             var slug = "";
@@ -189,18 +194,23 @@ public class DataTests
             {
                 var repo = new ConduitRepository(context);
                 var article = await repo.GetArticleBySlugAsync(slug, true, CancellationToken.None);
-                comment1 = new Comment("commentbody1", username1, article.Id);
+                comment1 = new Comment("commentbody1", username1, article!.Id);
                 repo.AddArticleComment(comment1);
                 await repo.SaveChangesAsync(CancellationToken.None);
             }
+            
+            
             
             await using (var context = new ConduitContext(contextOptions))
             {
                 var repo = new ConduitRepository(context);
                 var article = await repo.GetArticleBySlugAsync(slug, false, CancellationToken.None);
-                article.Comments.Count.Should().Be(1);
+                var comments = await repo.GetCommentsBySlugAsync(slug, username2, CancellationToken.None);
+                article!.Comments = comments;
+                article!.Comments.Count.Should().Be(1);
                 var firstComment = article.Comments.First();
                 firstComment.Username.Should().Be(username1);
+                firstComment.Author.Followers.Should().HaveCount(1);
                 repo.RemoveArticleComment(firstComment);
                 await repo.SaveChangesAsync(CancellationToken.None);
             }

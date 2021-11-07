@@ -19,7 +19,7 @@ public interface IArticlesHandler
     public Task<ArticlesResponseDto> GetArticlesAsync(
         ArticlesQuery query, CancellationToken cancellationToken);
 
-    public Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken);
+    public Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken);
 
     public Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
         CancellationToken cancellationToken);

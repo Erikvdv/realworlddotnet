@@ -11,7 +11,7 @@ using Realworlddotnet.Data.Contexts;
 namespace Realworlddotnet.Data.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    [Migration("20211106160014_Initial")]
+    [Migration("20211107084644_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,21 +123,6 @@ namespace Realworlddotnet.Data.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Realworlddotnet.Core.Entities.FollowedUser", b =>
-                {
-                    b.Property<string>("Username")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FollowerUsername")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Username", "FollowerUsername");
-
-                    b.HasIndex("FollowerUsername");
-
-                    b.ToTable("FollowedUsers");
-                });
-
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Tag", b =>
                 {
                     b.Property<string>("Id")
@@ -175,6 +160,21 @@ namespace Realworlddotnet.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.UserLink", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FollowerUsername")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Username", "FollowerUsername");
+
+                    b.HasIndex("FollowerUsername");
+
+                    b.ToTable("FollowedUsers");
                 });
 
             modelBuilder.Entity("ArticleTag", b =>
@@ -241,7 +241,7 @@ namespace Realworlddotnet.Data.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Realworlddotnet.Core.Entities.FollowedUser", b =>
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.UserLink", b =>
                 {
                     b.HasOne("Realworlddotnet.Core.Entities.User", "FollowerUser")
                         .WithMany("FollowedUsers")

@@ -12,7 +12,7 @@ public static class CommentMapper
             commentEntity.Author.Username,
             commentEntity.Author.Image,
             commentEntity.Author.Bio,
-            false);
+            commentEntity.Author.Followers.Any());
         return new CommentModel(commentEntity.Id,
             commentEntity.CreatedAt,
             commentEntity.UpdatedAt,

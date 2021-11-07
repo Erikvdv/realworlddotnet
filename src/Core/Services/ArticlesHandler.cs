@@ -86,9 +86,9 @@ public class ArticlesHandler : IArticlesHandler
         return _repository.GetArticlesAsync(query, cancellationToken);
     }
 
-    public async Task<Article> GetArticleBySlugAsync(string slug, CancellationToken cancellationToken)
+    public async Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken)
     {
-        var article = await _repository.GetArticleBySlugAsync(slug, true, cancellationToken);
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
 
         if (article == null)
         {
@@ -99,6 +99,9 @@ public class ArticlesHandler : IArticlesHandler
                 Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
             });
         }
+
+        var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
+        article.Comments = comments;
 
         return article;
     }
@@ -139,7 +142,7 @@ public class ArticlesHandler : IArticlesHandler
             });
         }
 
-        var comments = await _repository.GetCommentsBySlugAsync(slug, cancellationToken);
+        var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
         var comment = comments.FirstOrDefault(x => x.Id == commentId);
         if (comment == null)
         {
@@ -170,7 +173,7 @@ public class ArticlesHandler : IArticlesHandler
             var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
         }
         
-        var comments = await _repository.GetCommentsBySlugAsync(slug, cancellationToken);
+        var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
         return comments;
     }
 

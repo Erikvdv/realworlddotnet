@@ -22,7 +22,7 @@ public static class ArticlesMapper
                 author.Username,
                 author.Image,
                 author.Bio,
-                false),
+                author.Followers.Any()),
             article.Favorited,
             article.FavoritesCount);
         return result;

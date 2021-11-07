@@ -29,9 +29,9 @@ public class User
     public ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
     public ICollection<Comment>? ArticleComments { get; set; }
     
-    public ICollection<FollowedUser>? Followers { get; set; }
-    
-    public ICollection<FollowedUser>? FollowedUsers { get; set; }
+    public ICollection<UserLink> Followers { get; set; } = new List<UserLink>();
+
+    public ICollection<UserLink> FollowedUsers { get; set; } = new List<UserLink>();
 
     public void UpdateUser(UpdatedUserDto updatedUser)
     {

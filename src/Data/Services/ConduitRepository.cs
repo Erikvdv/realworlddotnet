@@ -111,9 +111,8 @@ public class ConduitRepository : IConduitRepository
     {
         var query = _context.Articles
             .Include(x => x.Author)
-            .Include(x => x.Tags)
-            .Include(x => x.Comments);
-            
+            .Include(x => x.Tags);
+
         if (asNoTracking)
             query.AsNoTracking();
 
@@ -159,11 +158,11 @@ public class ConduitRepository : IConduitRepository
         _context.Comments.Remove(comment);
     }
     
-    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, CancellationToken cancellationToken)
+    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, string username, CancellationToken cancellationToken)
     {
         return await _context.Comments.Where(x => x.Article.Slug == slug)
             .Include(x => x.Author)
-            .AsNoTracking()
+                .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username))
             .ToListAsync(cancellationToken);
     }
     
@@ -186,11 +185,11 @@ public class ConduitRepository : IConduitRepository
 
     public void Follow(string username, string followerUsername)
     {
-        _context.FollowedUsers.Add(new FollowedUser(username, followerUsername));
+        _context.FollowedUsers.Add(new UserLink(username, followerUsername));
     }
 
     public void UnFollow(string username, string followerUsername)
     {
-        _context.FollowedUsers.Remove(new FollowedUser(username, followerUsername));
+        _context.FollowedUsers.Remove(new UserLink(username, followerUsername));
     }
 }
