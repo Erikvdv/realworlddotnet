@@ -21,7 +21,7 @@ public class CertificateProvider : ICertificateProvider
             throw new ArgumentNullException(nameof(thumbprint));
         }
 
-        _logger.LogInformation($"Loading certificate {thumbprint} from store");
+        _logger.LogInformation("Loading certificate {Thumbprint} from store", thumbprint);
 
         var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
         store.Open(OpenFlags.ReadOnly);

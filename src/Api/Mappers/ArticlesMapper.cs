@@ -1,4 +1,3 @@
-using System.Linq;
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
@@ -23,9 +22,9 @@ public static class ArticlesMapper
                 author.Username,
                 author.Image,
                 author.Bio,
-                false),
-            false,
-            0);
+                author.Followers.Any()),
+            article.Favorited,
+            article.FavoritesCount);
         return result;
     }
 
@@ -36,4 +35,6 @@ public static class ArticlesMapper
             .ToList();
         return new ArticlesResponse(articles, articlesResponseDto.ArticlesCount);
     }
+    
+    
 }

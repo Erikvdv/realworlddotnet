@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace Realworlddotnet.Infrastructure.Utils;
@@ -7,7 +8,14 @@ public static class Slug
 {
     public static string GenerateSlug(this string phrase)
     {
-        var str = phrase.ToLowerInvariant();
+        var shortGuid = CreateShortGuid();
+        var slug = CreateSlug(phrase);
+        return slug + "-" + shortGuid;
+    }
+
+    private static string CreateSlug(string input)
+    {
+        var str = input.ToLowerInvariant();
 
         // invalid chars
         str = Regex.Replace(str, @"[^a-z0-9\s-]", string.Empty);
@@ -19,5 +27,14 @@ public static class Slug
         str = str[..(str.Length <= 45 ? str.Length : 45)].Trim();
         str = Regex.Replace(str, @"\s", "-"); // hyphens
         return str;
+    }
+    
+    public static string CreateShortGuid()
+    {
+        var guid = Guid.NewGuid();
+        string enc = Convert.ToBase64String(guid.ToByteArray());
+        enc = enc.Replace("/", "_");
+        enc = enc.Replace("+", "-");
+        return enc.Substring(0, 22);
     }
 }

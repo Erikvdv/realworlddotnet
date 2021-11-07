@@ -15,6 +15,6 @@ public class ProblemDetailsLogging : IPostConfigureOptions<ProblemDetailsOptions
 
     public void PostConfigure(string name, ProblemDetailsOptions options)
     {
-        options.OnBeforeWriteDetails += (context, problem) => { _logger.LogInformation("{@problem}", problem); };
+        options.OnBeforeWriteDetails += (_, problem) => { _logger.LogInformation("{@Problem}", problem); };
     }
 }

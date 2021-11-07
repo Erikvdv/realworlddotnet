@@ -1,13 +1,11 @@
-using System;
 using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Realworlddotnet.Api.Mappers;
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Services.Interfaces;
+using Comment = Realworlddotnet.Api.Models.Comment;
 
 namespace Realworlddotnet.Api.Controllers;
 
@@ -16,6 +14,7 @@ namespace Realworlddotnet.Api.Controllers;
 public class ArticlesController : ControllerBase
 {
     private readonly IArticlesHandler _articlesHandler;
+    private string Username => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     public ArticlesController(IArticlesHandler articlesHandler)
     {
@@ -28,9 +27,8 @@ public class ArticlesController : ControllerBase
         RequestEnvelope<ArticleEnvelope<NewArticleDto>> request,
         CancellationToken cancellationToken)
     {
-        var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var article =
-            await _articlesHandler.CreateArticleAsync(request.Body.Article, username, cancellationToken);
+            await _articlesHandler.CreateArticleAsync(request.Body.Article, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }
@@ -39,78 +37,99 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticlesResponse>> GetAsync(
         [FromQuery] ArticlesQuery query, CancellationToken cancellationToken)
     {
-        var response = await _articlesHandler.GetArticlesAsync(query, cancellationToken);
+        var response = await _articlesHandler.GetArticlesAsync(query, Username, false, cancellationToken);
         var result = ArticlesMapper.MapFromArticles(response);
         return result;
     }
 
     [HttpGet("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.GetArticleBySlugAsync(slug, Username, cancellationToken);
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]
     [HttpPut("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UpdateBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UpdateBySlugAsync(string slug,
+        RequestEnvelope<ArticleEnvelope<ArticleUpdateDto>> request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.UpdateArticleAsync(request.Body.Article,
+            slug,
+            Username,
+            cancellationToken);
+
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]
     [HttpDelete("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        await _articlesHandler.DeleteArticleAsync(slug, Username, cancellationToken);
+        return Ok();
     }
 
     [Authorize]
     [HttpPost("{slug}/favorite")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.AddFavoriteAsync(slug, Username, cancellationToken);
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]
     [HttpDelete("{slug}/favorite")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var article = await _articlesHandler.DeleteFavorite(slug, Username, cancellationToken);
+        var result = ArticlesMapper.MapFromArticleEntity(article);
+        return new ArticleEnvelope<ArticleResponse>(result);
     }
 
     [Authorize]
     [HttpGet("feed")]
-    public async Task<ActionResult<ArticlesResponseDto>> GetFeedAsync([FromQuery] FeedQuery query)
+    public async Task<ActionResult<ArticlesResponse>> GetFeedAsync([FromQuery] FeedQuery query,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var articlesQuery = new ArticlesQuery(null, null, null, query.Limit, query.Offset);
+        var response = await _articlesHandler.GetArticlesAsync(articlesQuery, Username, false, cancellationToken);
+        var result = ArticlesMapper.MapFromArticles(response);
+        return result;
     }
 
     [Authorize]
     [HttpPost("{slug}/comments")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> AddCommentAsync(string slug)
+    public async Task<CommentEnvelope<Comment>> AddCommentAsync(string slug,
+        RequestEnvelope<CommentEnvelope<CommentDto>> request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var result = await _articlesHandler.AddCommentAsync(slug, Username, request.Body.comment, cancellationToken);
+        var comment = CommentMapper.MapFromCommentEntity(result);
+        return new CommentEnvelope<Comment>(comment);
     }
 
     [HttpGet("{slug}/comments")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug)
+    public async Task<ActionResult<CommentsEnvelope<List<Comment>>>> GetCommentAsync(string slug,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var result = await _articlesHandler.GetCommentsAsync(slug, Username, cancellationToken);
+        var comments = result.Select(CommentMapper.MapFromCommentEntity);
+        return new CommentsEnvelope<List<Comment>>(comments.ToList());
     }
 
     [Authorize]
     [HttpDelete("{slug}/comments/{commentId}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, string commentId)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, int commentId,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        await _articlesHandler.RemoveCommentAsync(slug, commentId, Username, cancellationToken);
+        return Ok();
     }
 }

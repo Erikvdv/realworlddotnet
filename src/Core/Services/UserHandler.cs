@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Mvc;
 using Realworlddotnet.Core.Dto;
@@ -13,22 +12,20 @@ namespace Realworlddotnet.Core.Services;
 
 public class UserHandler : IUserHandler
 {
-    private readonly IMapper _mapper;
     private readonly IConduitRepository _repository;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator, IMapper mapper)
+    public UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator)
     {
         _repository = repository;
         _tokenGenerator = tokenGenerator;
-        _mapper = mapper;
     }
 
     public async Task<UserDto> CreateAsync(NewUserDto newUser, CancellationToken cancellationToken)
     {
         var user = new User(newUser);
         await _repository.AddUserAsync(user);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
         var token = _tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }
@@ -38,7 +35,7 @@ public class UserHandler : IUserHandler
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
         user.UpdateUser(updatedUser);
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
         var token = _tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }

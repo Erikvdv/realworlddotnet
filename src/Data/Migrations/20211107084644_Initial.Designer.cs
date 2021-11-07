@@ -8,11 +8,11 @@ using Realworlddotnet.Data.Contexts;
 
 #nullable disable
 
-namespace Realworlddotnet.Infrastructure.Migrations
+namespace Realworlddotnet.Data.Migrations
 {
     [DbContext(typeof(ConduitContext))]
-    [Migration("20211029185229_MigrationName")]
-    partial class MigrationName
+    [Migration("20211107084644_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,47 +70,57 @@ namespace Realworlddotnet.Infrastructure.Migrations
 
                     b.HasIndex("AuthorUsername");
 
-                    b.HasIndex("Slug");
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Articles");
                 });
 
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.ArticleFavorite", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ArticleId", "Username");
+
+                    b.HasIndex("Username");
+
+                    b.ToTable("ArticleFavorites");
+                });
+
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Comment", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("ArticleId1")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AuthorUsername")
-                        .IsRequired()
+                    b.Property<Guid>("ArticleId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("CommentId");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("ArticleId1");
+                    b.HasKey("Id");
 
-                    b.HasIndex("AuthorUsername");
+                    b.HasIndex("ArticleId");
 
-                    b.ToTable("Comment");
+                    b.HasIndex("Username");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Tag", b =>
@@ -152,6 +162,21 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.UserLink", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FollowerUsername")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Username", "FollowerUsername");
+
+                    b.HasIndex("FollowerUsername");
+
+                    b.ToTable("FollowedUsers");
+                });
+
             modelBuilder.Entity("ArticleTag", b =>
                 {
                     b.HasOne("Realworlddotnet.Core.Entities.Article", null)
@@ -178,17 +203,36 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.ArticleFavorite", b =>
+                {
+                    b.HasOne("Realworlddotnet.Core.Entities.Article", "Article")
+                        .WithMany("ArticleFavorites")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "User")
+                        .WithMany("ArticleFavorites")
+                        .HasForeignKey("Username")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Comment", b =>
                 {
                     b.HasOne("Realworlddotnet.Core.Entities.Article", "Article")
                         .WithMany("Comments")
-                        .HasForeignKey("ArticleId1")
+                        .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Realworlddotnet.Core.Entities.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorUsername")
+                        .WithMany("ArticleComments")
+                        .HasForeignKey("Username")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -197,9 +241,41 @@ namespace Realworlddotnet.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.UserLink", b =>
+                {
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "FollowerUser")
+                        .WithMany("FollowedUsers")
+                        .HasForeignKey("FollowerUsername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Realworlddotnet.Core.Entities.User", "User")
+                        .WithMany("Followers")
+                        .HasForeignKey("Username")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FollowerUser");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Realworlddotnet.Core.Entities.Article", b =>
                 {
+                    b.Navigation("ArticleFavorites");
+
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("Realworlddotnet.Core.Entities.User", b =>
+                {
+                    b.Navigation("ArticleComments");
+
+                    b.Navigation("ArticleFavorites");
+
+                    b.Navigation("FollowedUsers");
+
+                    b.Navigation("Followers");
                 });
 #pragma warning restore 612, 618
         }
