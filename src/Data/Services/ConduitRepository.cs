@@ -174,7 +174,7 @@ public class ConduitRepository : IConduitRepository
         _context.Comments.Remove(comment);
     }
     
-    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, string username, CancellationToken cancellationToken)
+    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, string? username, CancellationToken cancellationToken)
     {
         return await _context.Comments.Where(x => x.Article.Slug == slug)
             .Include(x => x.Author)

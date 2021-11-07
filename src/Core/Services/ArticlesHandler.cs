@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -132,7 +131,6 @@ public class ArticlesHandler : IArticlesHandler
     public async Task RemoveCommentAsync(string slug, int commentId, string username,
         CancellationToken cancellationToken)
     {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
         var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
         if (article == null)
         {
@@ -169,10 +167,6 @@ public class ArticlesHandler : IArticlesHandler
     public async Task<List<Comment>> GetCommentsAsync(string slug, string? username,
         CancellationToken cancellationToken)
     {
-        if (username is not null)
-        {
-            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        }
         
         var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
         return comments;

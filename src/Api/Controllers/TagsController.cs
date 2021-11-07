@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Realworlddotnet.Api.Mappers;
 using Realworlddotnet.Api.Models;
 using Realworlddotnet.Core.Services.Interfaces;
 

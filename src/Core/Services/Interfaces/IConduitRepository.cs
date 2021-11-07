@@ -30,7 +30,7 @@ public interface IConduitRepository
     public void RemoveArticleComment(Comment comment);
 
     public Task<List<Comment>>
-        GetCommentsBySlugAsync(string slug, string username, CancellationToken cancellationToken);
+        GetCommentsBySlugAsync(string slug, string? username, CancellationToken cancellationToken);
     
     public Task<ArticleFavorite?> GetArticleFavoriteAsync(string username, Guid articleId);
     

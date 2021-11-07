@@ -1,12 +1,10 @@
 using System;
-using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
 using Realworlddotnet.Data.Contexts;
@@ -163,7 +161,7 @@ public class DataTests
                 await repo.SaveChangesAsync(CancellationToken.None);
             }
 
-            var slug = "";
+            string slug;
 
             await using (var context = new ConduitContext(contextOptions))
             {
@@ -207,7 +205,7 @@ public class DataTests
                 var article = await repo.GetArticleBySlugAsync(slug, false, CancellationToken.None);
                 var comments = await repo.GetCommentsBySlugAsync(slug, username2, CancellationToken.None);
                 article!.Comments = comments;
-                article!.Comments.Count.Should().Be(1);
+                article.Comments.Count.Should().Be(1);
                 var firstComment = article.Comments.First();
                 firstComment.Username.Should().Be(username1);
                 firstComment.Author.Followers.Should().HaveCount(1);

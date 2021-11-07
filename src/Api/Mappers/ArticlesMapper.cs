@@ -8,7 +8,7 @@ public static class ArticlesMapper
 {
     public static ArticleResponse MapFromArticleEntity(Article article)
     {
-        var tags = article.Tags?.Select(tag => tag.Id);
+        var tags = article.Tags.Select(tag => tag.Id);
         var author = article.Author;
         var result = new ArticleResponse(
             article.Slug,
@@ -17,7 +17,7 @@ public static class ArticlesMapper
             article.Body,
             article.CreatedAt,
             article.UpdatedAt,
-            tags ?? new List<string>(),
+            tags,
             new Author(
                 author.Username,
                 author.Image,
