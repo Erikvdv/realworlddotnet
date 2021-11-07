@@ -16,8 +16,7 @@ public interface IArticlesHandler
 
     public Task DeleteArticleAsync(string slug, string username, CancellationToken cancellationToken);
 
-    public Task<ArticlesResponseDto> GetArticlesAsync(
-        ArticlesQuery query, CancellationToken cancellationToken);
+    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, string username, bool isFeed, CancellationToken cancellationToken);
 
     public Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken);
 

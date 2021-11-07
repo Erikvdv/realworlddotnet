@@ -81,10 +81,11 @@ public class ArticlesHandler : IArticlesHandler
         await _repository.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, CancellationToken cancellationToken)
+    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, string username, bool isFeed, CancellationToken cancellationToken)
     {
-        return _repository.GetArticlesAsync(query, cancellationToken);
+        return _repository.GetArticlesAsync(query, username, false, cancellationToken);
     }
+    
 
     public async Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken)
     {

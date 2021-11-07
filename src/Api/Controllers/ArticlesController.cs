@@ -37,7 +37,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticlesResponse>> GetAsync(
         [FromQuery] ArticlesQuery query, CancellationToken cancellationToken)
     {
-        var response = await _articlesHandler.GetArticlesAsync(query, cancellationToken);
+        var response = await _articlesHandler.GetArticlesAsync(query, Username, false, cancellationToken);
         var result = ArticlesMapper.MapFromArticles(response);
         return result;
     }
@@ -67,7 +67,8 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpDelete("{slug}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug, CancellationToken cancellationToken)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
         await _articlesHandler.DeleteArticleAsync(slug, Username, cancellationToken);
         return Ok();
@@ -75,7 +76,8 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpPost("{slug}/favorite")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug, CancellationToken cancellationToken)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
         var article = await _articlesHandler.AddFavoriteAsync(slug, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
@@ -84,7 +86,8 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpDelete("{slug}/favorite")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug, CancellationToken cancellationToken)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug,
+        CancellationToken cancellationToken)
     {
         var article = await _articlesHandler.DeleteFavorite(slug, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
@@ -93,10 +96,13 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpGet("feed")]
-    public async Task<ActionResult<ArticlesResponseDto>> GetFeedAsync([FromQuery] FeedQuery query)
+    public async Task<ActionResult<ArticlesResponse>> GetFeedAsync([FromQuery] FeedQuery query,
+        CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        var articlesQuery = new ArticlesQuery(null, null, null, query.Limit, query.Offset);
+        var response = await _articlesHandler.GetArticlesAsync(articlesQuery, Username, false, cancellationToken);
+        var result = ArticlesMapper.MapFromArticles(response);
+        return result;
     }
 
     [Authorize]
@@ -110,7 +116,8 @@ public class ArticlesController : ControllerBase
     }
 
     [HttpGet("{slug}/comments")]
-    public async Task<ActionResult<CommentsEnvelope<List<Comment>>>> GetCommentAsync(string slug, CancellationToken cancellationToken)
+    public async Task<ActionResult<CommentsEnvelope<List<Comment>>>> GetCommentAsync(string slug,
+        CancellationToken cancellationToken)
     {
         var result = await _articlesHandler.GetCommentsAsync(slug, Username, cancellationToken);
         var comments = result.Select(CommentMapper.MapFromCommentEntity);
@@ -119,7 +126,8 @@ public class ArticlesController : ControllerBase
 
     [Authorize]
     [HttpDelete("{slug}/comments/{commentId}")]
-    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, int commentId, CancellationToken cancellationToken)
+    public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, int commentId,
+        CancellationToken cancellationToken)
     {
         await _articlesHandler.RemoveCommentAsync(slug, commentId, Username, cancellationToken);
         return Ok();

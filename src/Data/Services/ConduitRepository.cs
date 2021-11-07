@@ -81,6 +81,8 @@ public class ConduitRepository : IConduitRepository
 
     public async Task<ArticlesResponseDto> GetArticlesAsync(
         ArticlesQuery articlesQuery,
+        string? username,
+        bool isFeed,
         CancellationToken cancellationToken)
     {
         var query = _context.Articles.Select(x => x);
@@ -95,11 +97,25 @@ public class ConduitRepository : IConduitRepository
             query = query.Where(x => x.Tags.Any(tag => tag.Id == articlesQuery.Tag));
         }
 
+        query = query.Include(x => x.Author);
+
+        if (username is not null)
+        {
+            query = query.Include(x => x.Author)
+                .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username));
+        }
+        
+        if (isFeed)
+        {
+            query = query.Where(x => x.Author.Followers.Any());
+        }
+        
         var total = await query.CountAsync(cancellationToken);
         var pageQuery = query
             .Skip(articlesQuery.Offset).Take(articlesQuery.Limit)
             .Include(x => x.Author)
             .Include(x => x.Tags)
+            
             .AsNoTracking();
 
         var page = await pageQuery.ToListAsync(cancellationToken);

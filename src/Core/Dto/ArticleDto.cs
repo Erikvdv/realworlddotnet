@@ -22,8 +22,8 @@ public record ArticleUpdateDto(string? Title, string? Description, string? Body)
 
 public record ArticlesResponseDto(List<Article> Articles, int ArticlesCount);
 
-public record ArticlesQuery(string? Tag, string? Author, string? Favorited, int Limit = 10, int Offset = 0);
+public record ArticlesQuery(string? Tag, string? Author, string? Favorited, int Limit = 20, int Offset = 0);
 
-public record FeedQuery(int? Limit, int? Offset);
+public record FeedQuery(int Limit = 20, int Offset = 0);
 
 public record CommentDto(string body);

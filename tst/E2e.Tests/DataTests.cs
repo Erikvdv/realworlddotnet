@@ -177,7 +177,7 @@ public class DataTests
             await using (var context = new ConduitContext(contextOptions))
             {
                 var repo = new ConduitRepository(context);
-                var articles = await repo.GetArticlesAsync(new ArticlesQuery(null, null, null), CancellationToken.None);
+                var articles = await repo.GetArticlesAsync(new ArticlesQuery(null, null, null), username1, false, CancellationToken.None);
                 articles.ArticlesCount.Should().Be(1);
                 slug = articles.Articles.First().Slug;
             }
