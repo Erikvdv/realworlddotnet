@@ -38,7 +38,7 @@ public class ProfilesHandler : IProfilesHandler
             isFollowing = await _repository.IsFollowingAsync(profileUsername, username, cancellationToken);
         }
 
-        return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, isFollowing);
+        return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Image, isFollowing);
     }
 
     public async Task<ProfileDto> FollowProfileAsync(string profileUsername, string username,
