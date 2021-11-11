@@ -47,7 +47,7 @@ public class ProfilesHandlerTests
         result2.Bio.Should().Be(profileUser.Bio);
         result2.Image.Should().Be(profileUser.Image);
         
-        Func<Task> act =  () =>  handler.GetAsync(username2, username1, CancellationToken.None);
+        var act =  () =>  handler.GetAsync(username2, username1, CancellationToken.None);
         var result3 = await act.Should().ThrowAsync<ProblemDetailsException>();
         result3.Subject.First().Details.Status.Should().Be(422);
         result3.Subject.First().Details.Detail.Should().Be("Profile not found");
