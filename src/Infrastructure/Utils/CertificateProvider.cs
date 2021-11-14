@@ -37,4 +37,23 @@ public class CertificateProvider : ICertificateProvider
 
         return certCollection[0];
     }
+    
+    public X509Certificate2 LoadFromFile(string filename, string password)
+    {
+        if (string.IsNullOrWhiteSpace(filename))
+        {
+            throw new ArgumentNullException(nameof(filename));
+        }
+
+        _logger.LogInformation("Loading certificate {Thumbprint}", filename);
+        var certCollection = new X509Certificate2Collection();
+        certCollection.Import(filename, password);
+        
+        if (certCollection.Count <= 0)
+        {
+            throw new ArgumentException($"Unable to locate any certificate");
+        }
+
+        return certCollection[0];
+    }
 }

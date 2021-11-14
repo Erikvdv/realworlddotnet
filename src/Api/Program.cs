@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -27,9 +28,16 @@ builder.Host.UseSerilog((hostBuilderContext, services, loggerConfiguration) =>
     loggerConfiguration.AddApplicationInsightsLogging(services, hostBuilderContext.Configuration);
 });
 
-// Add services to the container.
-var connectionString = "Filename=../realworld.db";
+// setup database connection (used for in memory SQLite).
+// SQLite in memory requires an open connection during the application lifetime
+#pragma warning disable S125
+// to use a file based SQLite use: "Filename=../realworld.db";
+#pragma warning restore S125
+const string connectionString = "Filename=:memory:";
+var connection = new SqliteConnection(connectionString);
+connection.Open();
 
+// Add services to the container.
 builder.Services.AddControllers().AddFluentValidation(options =>
 {
     options.RegisterValidatorsFromAssemblyContaining(typeof(Program));
@@ -58,7 +66,7 @@ builder.Services.AddSingleton<ITokenGenerator>(container =>
 {
     var logger = container.GetRequiredService<ILogger<CertificateProvider>>();
     var certificateProvider = new CertificateProvider(logger);
-    var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
+    var cert = certificateProvider.LoadFromFile("identityserver_testing.pfx", "password");
 
     return new TokenGenerator(cert);
 });
@@ -68,7 +76,7 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
     .Configure<ILogger<CertificateProvider>>((o, logger) =>
     {
         var certificateProvider = new CertificateProvider(logger);
-        var cert = certificateProvider.LoadFromUserStore("4B5FE072C7AD8A9B5DCFDD1A20608BB54DE0954F");
+        var cert = certificateProvider.LoadFromFile("identityserver_testing.pfx", "password");
 
         o.TokenValidationParameters = new TokenValidationParameters
         {
@@ -79,7 +87,8 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
         o.Events = new JwtBearerEvents { OnMessageReceived = CustomOnMessageReceivedHandler.OnMessageReceived };
     });
 
-builder.Services.AddDbContext<ConduitContext>(options => { options.UseSqlite(connectionString); });
+// for SQLite in memory a connection is provided rather than a connection string
+builder.Services.AddDbContext<ConduitContext>(options => { options.UseSqlite(connection); });
 builder.Services.AddProblemDetails();
 builder.Services.ConfigureOptions<ProblemDetailsLogging>();
 
@@ -87,9 +96,16 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 Log.Information("Start configuring http request pipeline");
+
+// when using in memory SQLite ensure the tables are created
+using (var scope = app.Services.CreateScope())
+{
+    using var context = scope.ServiceProvider.GetService<ConduitContext>();
+    context?.Database.EnsureCreated();
+}
+
 app.UseSerilogRequestLogging();
 app.UseProblemDetails();
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
@@ -110,6 +126,7 @@ catch (Exception ex)
 }
 finally
 {
+    connection.Close();
     Log.CloseAndFlush();
     Thread.Sleep(2000);
 }
