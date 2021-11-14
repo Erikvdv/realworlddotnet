@@ -26,7 +26,8 @@ RUN dotnet publish "src/Api/Api.csproj" -c Release --no-build -o app
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
-
+RUN useradd -ms /bin/bash  dotnet
+USER dotnet
 WORKDIR /app
 COPY --from=publish /app ./
 
