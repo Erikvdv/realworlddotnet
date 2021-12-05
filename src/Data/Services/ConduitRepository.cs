@@ -104,18 +104,17 @@ public class ConduitRepository : IConduitRepository
             query = query.Include(x => x.Author)
                 .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username));
         }
-        
+
         if (isFeed)
         {
             query = query.Where(x => x.Author.Followers.Any());
         }
-        
+
         var total = await query.CountAsync(cancellationToken);
         var pageQuery = query
             .Skip(articlesQuery.Offset).Take(articlesQuery.Limit)
             .Include(x => x.Author)
             .Include(x => x.Tags)
-            
             .AsNoTracking();
 
         var page = await pageQuery.ToListAsync(cancellationToken);
@@ -123,20 +122,26 @@ public class ConduitRepository : IConduitRepository
         return new ArticlesResponseDto(page, total);
     }
 
-    public async Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, CancellationToken cancellationToken)
+    public async Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking,
+        CancellationToken cancellationToken)
     {
         var query = _context.Articles
             .Include(x => x.Author)
             .Include(x => x.Tags);
 
         if (asNoTracking)
+        {
             query.AsNoTracking();
+        }
 
         var article = await query
-            .FirstOrDefaultAsync(x => x.Slug == slug, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.Slug == slug, cancellationToken);
 
-        if (article == null) return article;
-        
+        if (article == null)
+        {
+            return article;
+        }
+
         var favoriteCount = await _context.ArticleFavorites.CountAsync(x => x.ArticleId == article.Id);
         article.Favorited = favoriteCount > 0;
         article.FavoritesCount = favoriteCount;
@@ -158,30 +163,31 @@ public class ConduitRepository : IConduitRepository
         return await _context.ArticleFavorites.FirstOrDefaultAsync(x =>
             x.Username == username && x.ArticleId == articleId);
     }
-    
+
     public void AddArticleFavorite(ArticleFavorite articleFavorite)
     {
         _context.ArticleFavorites.Add(articleFavorite);
     }
-    
+
     public void AddArticleComment(Comment comment)
     {
         _context.Comments.Add(comment);
     }
-    
+
     public void RemoveArticleComment(Comment comment)
     {
         _context.Comments.Remove(comment);
     }
-    
-    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, string? username, CancellationToken cancellationToken)
+
+    public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, string? username,
+        CancellationToken cancellationToken)
     {
         return await _context.Comments.Where(x => x.Article.Slug == slug)
             .Include(x => x.Author)
-                .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username))
+            .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username))
             .ToListAsync(cancellationToken);
     }
-    
+
     public void RemoveArticleFavorite(ArticleFavorite articleFavorite)
     {
         _context.ArticleFavorites.Remove(articleFavorite);
@@ -196,7 +202,7 @@ public class ConduitRepository : IConduitRepository
     {
         return _context.FollowedUsers.AnyAsync(
             x => x.Username == username && x.FollowerUsername == followerUsername,
-            cancellationToken: cancellationToken);
+            cancellationToken);
     }
 
     public void Follow(string username, string followerUsername)

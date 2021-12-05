@@ -1,10 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Realworlddotnet.Api.Mappers;
-using Realworlddotnet.Api.Models;
-using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Core.Services.Interfaces;
 using Comment = Realworlddotnet.Api.Models.Comment;
 
 namespace Realworlddotnet.Api.Controllers;
@@ -14,12 +7,13 @@ namespace Realworlddotnet.Api.Controllers;
 public class ArticlesController : ControllerBase
 {
     private readonly IArticlesHandler _articlesHandler;
-    private string Username => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     public ArticlesController(IArticlesHandler articlesHandler)
     {
         _articlesHandler = articlesHandler;
     }
+
+    private string Username => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpPost]
     [Authorize]

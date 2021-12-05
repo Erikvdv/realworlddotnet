@@ -1,12 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Hellang.Middleware.ProblemDetails;
-using Microsoft.AspNetCore.Mvc;
-using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Core.Services.Interfaces;
-
-namespace Realworlddotnet.Core.Services;
+﻿namespace Realworlddotnet.Core.Services;
 
 public class ProfilesHandler : IProfilesHandler
 {
@@ -17,7 +9,8 @@ public class ProfilesHandler : IProfilesHandler
         _repository = repository;
     }
 
-    public async Task<ProfileDto> GetAsync(string profileUsername, string? username, CancellationToken cancellationToken)
+    public async Task<ProfileDto> GetAsync(string profileUsername, string? username,
+        CancellationToken cancellationToken)
     {
         var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
 
@@ -30,7 +23,7 @@ public class ProfilesHandler : IProfilesHandler
                 Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
             });
         }
-        
+
         var isFollowing = false;
 
         if (username is not null)
@@ -55,13 +48,13 @@ public class ProfilesHandler : IProfilesHandler
                 Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
             });
         }
-        
+
         _repository.Follow(profileUsername, username);
         await _repository.SaveChangesAsync(cancellationToken);
-        
+
         return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, true);
     }
-    
+
     public async Task<ProfileDto> UnFollowProfileAsync(string profileUsername, string username,
         CancellationToken cancellationToken)
     {
@@ -76,10 +69,10 @@ public class ProfilesHandler : IProfilesHandler
                 Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
             });
         }
-        
+
         _repository.UnFollow(profileUsername, username);
         await _repository.SaveChangesAsync(cancellationToken);
-        
+
         return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, false);
     }
 }

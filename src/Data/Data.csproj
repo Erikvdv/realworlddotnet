@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations" />
+    <Folder Include="Migrations"/>
   </ItemGroup>
 
 </Project>

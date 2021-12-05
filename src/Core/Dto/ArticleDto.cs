@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Realworlddotnet.Core.Entities;
-
 namespace Realworlddotnet.Core.Dto;
 
 public record NewArticleDto(string Title, string Description, string Body, IEnumerable<string> TagList);

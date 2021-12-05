@@ -1,7 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Realworlddotnet.Core.Dto;
-
 namespace Realworlddotnet.Core.Services.Interfaces;
 
 public interface IUserHandler

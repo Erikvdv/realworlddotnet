@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Realworlddotnet.Core.Entities;
 
 public class Tag

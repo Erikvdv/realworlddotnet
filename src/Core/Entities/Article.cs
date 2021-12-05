@@ -1,13 +1,17 @@
-using System;
-using System.Collections.Generic;
-using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Infrastructure.Utils;
-
 namespace Realworlddotnet.Core.Entities;
 
 public class Article
 {
-    
+    public Article(string title, string description, string body)
+    {
+        Slug = title.GenerateSlug();
+        Title = title;
+        Description = description;
+        Body = body;
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public Guid Id { get; set; }
 
     public string Slug { get; set; }
@@ -23,25 +27,16 @@ public class Article
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset UpdatedAt { get; set; }
-    
+
     public bool Favorited { get; set; }
 
     public int FavoritesCount { get; set; } = 0;
 
     public ICollection<Tag> Tags { get; set; } = new List<Tag>();
-    
-    public List<Comment> Comments { get; set; } = new List<Comment>();
+
+    public List<Comment> Comments { get; set; } = new();
     public ICollection<ArticleFavorite> ArticleFavorites { get; set; } = new List<ArticleFavorite>();
-    
-    public Article(string title, string description, string body)
-    {
-        Slug = title.GenerateSlug();
-        Title = title;
-        Description = description;
-        Body = body;
-        CreatedAt = DateTimeOffset.UtcNow;
-        UpdatedAt = DateTimeOffset.UtcNow;
-    }
+
     public void UpdateArticle(ArticleUpdateDto update)
     {
         if (!string.IsNullOrWhiteSpace(update.Title))
@@ -59,6 +54,7 @@ public class Article
         {
             Description = update.Description;
         }
+
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 }
