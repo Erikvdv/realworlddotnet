@@ -1,10 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Realworlddotnet.Api.Models;
-using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Core.Services.Interfaces;
-
 namespace Realworlddotnet.Api.Controllers;
 
 [Route("[controller]")]

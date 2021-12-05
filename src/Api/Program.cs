@@ -1,24 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
-using FluentValidation.AspNetCore;
-using Hellang.Middleware.ProblemDetails;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Realworlddotnet.Core.Mappers;
-using Realworlddotnet.Core.Services;
-using Realworlddotnet.Core.Services.Interfaces;
-using Realworlddotnet.Data.Contexts;
-using Realworlddotnet.Data.Services;
-using Realworlddotnet.Infrastructure.Extensions.Authentication;
-using Realworlddotnet.Infrastructure.Extensions.Logging;
-using Realworlddotnet.Infrastructure.Extensions.ProblemDetails;
-using Realworlddotnet.Infrastructure.Utils;
-using Realworlddotnet.Infrastructure.Utils.Interfaces;
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // add logging
@@ -38,10 +17,7 @@ var connection = new SqliteConnection(connectionString);
 connection.Open();
 
 // Add services to the container.
-builder.Services.AddControllers().AddFluentValidation(options =>
-{
-    options.RegisterValidatorsFromAssemblyContaining(typeof(Program));
-});
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -54,7 +30,6 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressInferBindingSourcesForParameters = true;
 });
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IConduitRepository, ConduitRepository>();
 builder.Services.AddScoped<IUserHandler, UserHandler>();

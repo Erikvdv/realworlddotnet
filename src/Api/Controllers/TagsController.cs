@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Realworlddotnet.Api.Models;
-using Realworlddotnet.Core.Services.Interfaces;
-
-namespace Realworlddotnet.Api.Controllers;
+﻿namespace Realworlddotnet.Api.Controllers;
 
 public class TagsController : Controller
 {
     private readonly IArticlesHandler _articlesHandler;
+
     public TagsController(IArticlesHandler articlesHandler)
     {
         _articlesHandler = articlesHandler;

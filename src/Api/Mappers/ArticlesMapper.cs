@@ -1,7 +1,3 @@
-using Realworlddotnet.Api.Models;
-using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Core.Entities;
-
 namespace Realworlddotnet.Api.Mappers;
 
 public static class ArticlesMapper
@@ -35,6 +31,4 @@ public static class ArticlesMapper
             .ToList();
         return new ArticlesResponse(articles, articlesResponseDto.ArticlesCount);
     }
-    
-    
 }

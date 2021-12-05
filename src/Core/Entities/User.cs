@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Realworlddotnet.Core.Dto;
-
 namespace Realworlddotnet.Core.Entities;
 
 public class User
@@ -25,10 +22,10 @@ public class User
     public string Bio { get; set; } = string.Empty;
 
     public string Image { get; set; } = string.Empty;
-    
+
     public ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
     public ICollection<Comment>? ArticleComments { get; set; }
-    
+
     public ICollection<UserLink> Followers { get; set; } = new List<UserLink>();
 
     public ICollection<UserLink> FollowedUsers { get; set; } = new List<UserLink>();

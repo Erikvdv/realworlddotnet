@@ -39,14 +39,14 @@ public class ProfilesHandlerTests
         result1.Username.Should().Be(profileUser.Username);
         result1.Bio.Should().Be(profileUser.Bio);
         result1.Image.Should().Be(profileUser.Image);
-        
+
         var result2 = await handler.GetAsync(username1, username2, CancellationToken.None);
         result2.Following.Should().BeTrue();
         result2.Username.Should().Be(profileUser.Username);
         result2.Bio.Should().Be(profileUser.Bio);
         result2.Image.Should().Be(profileUser.Image);
-        
-        var act =  () =>  handler.GetAsync(username2, username1, CancellationToken.None);
+
+        var act = () => handler.GetAsync(username2, username1, CancellationToken.None);
         var result3 = await act.Should().ThrowAsync<ProblemDetailsException>();
         result3.Subject.First().Details.Status.Should().Be(422);
         result3.Subject.First().Details.Detail.Should().Be("Profile not found");

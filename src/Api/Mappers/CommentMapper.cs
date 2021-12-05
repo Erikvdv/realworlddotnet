@@ -1,5 +1,4 @@
-﻿using Realworlddotnet.Api.Models;
-using CommentEntity = Realworlddotnet.Core.Entities.Comment;
+﻿using CommentEntity = Realworlddotnet.Core.Entities.Comment;
 using CommentModel = Realworlddotnet.Api.Models.Comment;
 
 namespace Realworlddotnet.Api.Mappers;

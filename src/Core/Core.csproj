@@ -4,16 +4,16 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Realworlddotnet.Core</RootNamespace>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.2.0" />
+    <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.2.0"/>
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
   </ItemGroup>
 
 </Project>

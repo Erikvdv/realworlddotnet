@@ -28,11 +28,11 @@ public static class Slug
         str = Regex.Replace(str, @"\s", "-"); // hyphens
         return str;
     }
-    
+
     public static string CreateShortGuid()
     {
         var guid = Guid.NewGuid();
-        string enc = Convert.ToBase64String(guid.ToByteArray());
+        var enc = Convert.ToBase64String(guid.ToByteArray());
         enc = enc.Replace("/", "_");
         enc = enc.Replace("+", "-");
         return enc.Substring(0, 22);

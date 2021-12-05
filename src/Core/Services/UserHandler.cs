@@ -1,13 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Hellang.Middleware.ProblemDetails;
-using Microsoft.AspNetCore.Mvc;
-using Realworlddotnet.Core.Dto;
-using Realworlddotnet.Core.Entities;
-using Realworlddotnet.Core.Services.Interfaces;
-using Realworlddotnet.Infrastructure.Utils.Interfaces;
-
 namespace Realworlddotnet.Core.Services;
 
 public class UserHandler : IUserHandler

@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
 using Realworlddotnet.Data.Contexts;
@@ -12,7 +12,6 @@ using Realworlddotnet.Data.Services;
 using Xunit;
 
 namespace E2e.Tests;
-
 
 public class DataTests
 {
@@ -135,7 +134,7 @@ public class DataTests
 
         var user1 = new User(new NewUserDto(username1, "test1@test.com", "Test1234"));
         var user2 = new User(new NewUserDto(username2, "test2@test.com", "Test1234"));
-        
+
         var article1 = new Article("title1", "description1", "body1");
 
 
@@ -155,7 +154,7 @@ public class DataTests
                 await context.Database.EnsureCreatedAsync();
                 context.Users.AddRange(user1, user2);
                 await context.SaveChangesAsync(CancellationToken.None);
-                
+
                 var repo = new ConduitRepository(context);
                 repo.Follow(username1, username2);
                 await repo.SaveChangesAsync(CancellationToken.None);
@@ -175,7 +174,10 @@ public class DataTests
             await using (var context = new ConduitContext(contextOptions))
             {
                 var repo = new ConduitRepository(context);
-                var articles = await repo.GetArticlesAsync(new ArticlesQuery(null, null, null), username1, false, CancellationToken.None);
+                var articles = await repo.GetArticlesAsync(new ArticlesQuery(null, null, null),
+                    username1,
+                    false,
+                    CancellationToken.None);
                 articles.ArticlesCount.Should().Be(1);
                 slug = articles.Articles.First().Slug;
             }
@@ -188,6 +190,7 @@ public class DataTests
             }
 
             Comment comment1;
+
             await using (var context = new ConduitContext(contextOptions))
             {
                 var repo = new ConduitRepository(context);
@@ -196,9 +199,8 @@ public class DataTests
                 repo.AddArticleComment(comment1);
                 await repo.SaveChangesAsync(CancellationToken.None);
             }
-            
-            
-            
+
+
             await using (var context = new ConduitContext(contextOptions))
             {
                 var repo = new ConduitRepository(context);
@@ -212,7 +214,7 @@ public class DataTests
                 repo.RemoveArticleComment(firstComment);
                 await repo.SaveChangesAsync(CancellationToken.None);
             }
-            
+
             await using (var context = new ConduitContext(contextOptions))
             {
                 var repo = new ConduitRepository(context);
