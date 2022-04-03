@@ -10,6 +10,7 @@ public class TagsController : Controller
     }
 
     [Route("[controller]")]
+    [HttpGet]
     public async Task<ActionResult<TagsEnvelope<string[]>>> GetArticlesAsync(CancellationToken cancellationToken)
     {
         var tags = await _articlesHandler.GetTags(cancellationToken);
