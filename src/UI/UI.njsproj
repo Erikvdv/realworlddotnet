@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{887bc9d1-d328-4b1e-89c7-1eff7a3b7ed4}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile>au</StartupFile>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">16.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ScriptArguments>run --watch</ScriptArguments>
+    <StartWebBrowser>False</StartWebBrowser>
+    <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include="logo.png" />
+    <Content Include="favicon.ico" />
+    <None Include="jsconfig.json" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Content Include="index.ejs" />
+    <Content Include="karma.conf.js" />
+    <Content Include="package-scripts.js" />
+    <Content Include="webpack.config.js" />
+    <Content Include="aurelia_project\aurelia.json" />
+    <Content Include="src\app.html" />
+    <Content Include="src\app.js" />
+    <Content Include="src\environment.js" />
+    <Content Include="src\main.js" />
+    <Content Include="static\favicon.ico" />
+    <Content Include="test\karma-bundle.js" />
+    <Content Include="test\karma.conf.js" />
+    <Content Include="test\protractor.conf.js" />
+    <Content Include="aurelia_project\environments\dev.js" />
+    <Content Include="aurelia_project\environments\prod.js" />
+    <Content Include="aurelia_project\environments\stage.js" />
+    <Content Include="aurelia_project\generators\attribute.json" />
+    <Content Include="aurelia_project\generators\binding-behavior.json" />
+    <Content Include="aurelia_project\generators\component.json" />
+    <Content Include="aurelia_project\generators\element.json" />
+    <Content Include="aurelia_project\generators\generator.json" />
+    <Content Include="aurelia_project\generators\task.json" />
+    <Content Include="aurelia_project\generators\value-converter.json" />
+    <Content Include="aurelia_project\generators\attribute.js" />
+    <Content Include="aurelia_project\generators\binding-behavior.js" />
+    <Content Include="aurelia_project\generators\component.js" />
+    <Content Include="aurelia_project\generators\element.js" />
+    <Content Include="aurelia_project\generators\generator.js" />
+    <Content Include="aurelia_project\generators\task.js" />
+    <Content Include="aurelia_project\generators\value-converter.js" />
+    <Content Include="aurelia_project\tasks\build.json" />
+    <Content Include="aurelia_project\tasks\karma.json" />
+    <Content Include="aurelia_project\tasks\run.json" />
+    <Content Include="aurelia_project\tasks\build.js" />
+    <Content Include="aurelia_project\tasks\environment.js" />
+    <Content Include="aurelia_project\tasks\karma.js" />
+    <Content Include="aurelia_project\tasks\run.js" />
+    <Content Include="src\resources\index.js" />
+    <Content Include="src\shared\index.js" />
+    <Content Include="src\components\article\article-component.html" />
+    <Content Include="src\components\article\article-meta.html" />
+    <Content Include="src\components\article\comment.html" />
+    <Content Include="src\components\article\article-component.js" />
+    <Content Include="src\components\article\article-meta.js" />
+    <Content Include="src\components\article\comment.js" />
+    <Content Include="src\components\auth\auth-component.html" />
+    <Content Include="src\components\auth\auth-component.js" />
+    <Content Include="src\components\editor\editor-component.html" />
+    <Content Include="src\components\editor\editor-component.js" />
+    <Content Include="src\components\home\home-component.html" />
+    <Content Include="src\components\home\home-component.js" />
+    <Content Include="src\components\profile\profile-article-component.html" />
+    <Content Include="src\components\profile\profile-component.html" />
+    <Content Include="src\components\profile\profile-favorites-component.html" />
+    <Content Include="src\components\profile\profile-article-component.js" />
+    <Content Include="src\components\profile\profile-component.js" />
+    <Content Include="src\components\profile\profile-favorites-component.js" />
+    <Content Include="src\components\settings\settings-component.html" />
+    <Content Include="src\components\settings\settings-component.js" />
+    <Content Include="src\resources\elements\article-list.html" />
+    <Content Include="src\resources\elements\article-preview.html" />
+    <Content Include="src\resources\elements\article-list.js" />
+    <Content Include="src\resources\elements\article-preview.js" />
+    <Content Include="src\resources\value-converters\date.js" />
+    <Content Include="src\resources\value-converters\format-html.js" />
+    <Content Include="src\resources\value-converters\keys.js" />
+    <Content Include="src\resources\value-converters\markdown-html.js" />
+    <Content Include="src\shared\buttons\favorite-button.html" />
+    <Content Include="src\shared\buttons\follow-button.html" />
+    <Content Include="src\shared\buttons\favorite-button.js" />
+    <Content Include="src\shared\buttons\follow-button.js" />
+    <Content Include="src\shared\layouts\footer-layout.html" />
+    <Content Include="src\shared\layouts\header-layout.html" />
+    <Content Include="src\shared\layouts\footer-layout.js" />
+    <Content Include="src\shared\layouts\header-layout.js" />
+    <Content Include="src\shared\models\user.js" />
+    <Content Include="src\shared\services\api-service.js" />
+    <Content Include="src\shared\services\article-service.js" />
+    <Content Include="src\shared\services\comment-service.js" />
+    <Content Include="src\shared\services\config.js" />
+    <Content Include="src\shared\services\http-interceptor.js" />
+    <Content Include="src\shared\services\HttpError.js" />
+    <Content Include="src\shared\services\jwt-service.js" />
+    <Content Include="src\shared\services\profile-service.js" />
+    <Content Include="src\shared\services\service-helper.js" />
+    <Content Include="src\shared\services\tag-service.js" />
+    <Content Include="src\shared\services\user-service.js" />
+    <Content Include="src\shared\state\shared-state.js" />
+    <Content Include="test\e2e\demo.e2e.js" />
+    <Content Include="test\e2e\skeleton.po.js" />
+    <Content Include="test\e2e\welcome.po.js" />
+    <Content Include="test\unit\app.spec.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="aurelia_project" />
+    <Folder Include="aurelia_project\environments" />
+    <Folder Include="aurelia_project\generators" />
+    <Folder Include="aurelia_project\tasks" />
+    <Folder Include="src" />
+    <Folder Include="src\components" />
+    <Folder Include="src\components\article" />
+    <Folder Include="src\components\auth" />
+    <Folder Include="src\components\editor" />
+    <Folder Include="src\components\home" />
+    <Folder Include="src\components\profile" />
+    <Folder Include="src\components\settings" />
+    <Folder Include="src\resources" />
+    <Folder Include="src\resources\elements" />
+    <Folder Include="src\resources\value-converters" />
+    <Folder Include="src\shared" />
+    <Folder Include="src\shared\buttons" />
+    <Folder Include="src\shared\layouts" />
+    <Folder Include="src\shared\models" />
+    <Folder Include="src\shared\services" />
+    <Folder Include="src\shared\state" />
+    <Folder Include="static" />
+    <Folder Include="test" />
+    <Folder Include="test\e2e" />
+    <Folder Include="test\unit" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
