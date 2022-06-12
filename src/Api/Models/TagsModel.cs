@@ -1,3 +1,6 @@
-﻿namespace Realworlddotnet.Api.Models;
+﻿namespace Realworlddotnet.Api.Models
+{
 
-public record TagsEnvelope<T>(T tags);
+    public record TagsEnvelope<T>(T tags);
+
+}

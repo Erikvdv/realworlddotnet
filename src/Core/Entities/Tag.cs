@@ -1,13 +1,30 @@
-namespace Realworlddotnet.Core.Entities;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Realworlddotnet.Core.Entities;
+using System;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Infrastructure.Utils;
+using System.Threading;
+using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Infrastructure.Utils.Interfaces;
+using System.Linq;
 
-public class Tag
+namespace Realworlddotnet.Core.Entities
 {
-    public Tag(string id)
+
+    public class Tag
     {
-        Id = id;
+        public Tag(string id)
+        {
+            Id = id;
+        }
+
+        public string Id { get; set; }
+
+        public ICollection<Article> Articles { get; set; } = null!;
     }
 
-    public string Id { get; set; }
-
-    public ICollection<Article> Articles { get; set; } = null!;
 }

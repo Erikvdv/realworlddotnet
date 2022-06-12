@@ -1,6 +1,9 @@
-namespace Realworlddotnet.Infrastructure.Utils.Interfaces;
-
-public interface ITokenGenerator
+﻿namespace Realworlddotnet.Infrastructure.Utils.Interfaces
 {
-    public string CreateToken(string username);
+
+    public interface ITokenGenerator
+    {
+        public string CreateToken(string username);
+    }
+
 }

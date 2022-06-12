@@ -1,42 +1,59 @@
-namespace Realworlddotnet.Core.Services.Interfaces;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Realworlddotnet.Core.Entities;
+using System;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Infrastructure.Utils;
+using System.Threading;
+using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Infrastructure.Utils.Interfaces;
+using System.Linq;
 
-public interface IConduitRepository
+namespace Realworlddotnet.Core.Services.Interfaces
 {
-    public Task AddUserAsync(User user);
 
-    public Task<User?> GetUserByEmailAsync(string email);
+    public interface IConduitRepository
+    {
+        public Task AddUserAsync(User user);
 
-    public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken);
+        public Task<User?> GetUserByEmailAsync(string email);
 
-    public Task<IEnumerable<Tag>> UpsertTagsAsync(IEnumerable<string> tags, CancellationToken cancellationToken);
+        public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken);
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken);
+        public Task<IEnumerable<Tag>> UpsertTagsAsync(IEnumerable<string> tags, CancellationToken cancellationToken);
 
-    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery articlesQuery, string? username, bool isFeed,
-        CancellationToken cancellationToken);
+        public Task SaveChangesAsync(CancellationToken cancellationToken);
 
-    public Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, CancellationToken cancellationToken);
+        public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery articlesQuery, string? username, bool isFeed,
+            CancellationToken cancellationToken);
 
-    public void AddArticle(Article article);
+        public Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, CancellationToken cancellationToken);
 
-    public void DeleteArticle(Article article);
-    public void AddArticleComment(Comment comment);
-    public void RemoveArticleComment(Comment comment);
+        public void AddArticle(Article article);
 
-    public Task<List<Comment>>
-        GetCommentsBySlugAsync(string slug, string? username, CancellationToken cancellationToken);
+        public void DeleteArticle(Article article);
+        public void AddArticleComment(Comment comment);
+        public void RemoveArticleComment(Comment comment);
 
-    public Task<ArticleFavorite?> GetArticleFavoriteAsync(string username, Guid articleId);
+        public Task<List<Comment>>
+            GetCommentsBySlugAsync(string slug, string? username, CancellationToken cancellationToken);
 
-    public void AddArticleFavorite(ArticleFavorite articleFavorite);
+        public Task<ArticleFavorite?> GetArticleFavoriteAsync(string username, Guid articleId);
 
-    public void RemoveArticleFavorite(ArticleFavorite articleFavorite);
+        public void AddArticleFavorite(ArticleFavorite articleFavorite);
 
-    public Task<List<Tag>> GetTagsAsync(CancellationToken cancellationToken);
+        public void RemoveArticleFavorite(ArticleFavorite articleFavorite);
 
-    public Task<bool> IsFollowingAsync(string username, string followerUsername, CancellationToken cancellationToken);
+        public Task<List<Tag>> GetTagsAsync(CancellationToken cancellationToken);
 
-    public void Follow(string username, string followerUsername);
+        public Task<bool> IsFollowingAsync(string username, string followerUsername, CancellationToken cancellationToken);
 
-    public void UnFollow(string username, string followerUsername);
+        public void Follow(string username, string followerUsername);
+
+        public void UnFollow(string username, string followerUsername);
+    }
+
 }

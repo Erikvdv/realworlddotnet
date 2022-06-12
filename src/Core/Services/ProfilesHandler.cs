@@ -1,78 +1,95 @@
-﻿namespace Realworlddotnet.Core.Services;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Realworlddotnet.Core.Entities;
+using System;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Infrastructure.Utils;
+using System.Threading;
+using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Infrastructure.Utils.Interfaces;
+using System.Linq;
 
-public class ProfilesHandler : IProfilesHandler
+namespace Realworlddotnet.Core.Services
 {
-    private readonly IConduitRepository _repository;
 
-    public ProfilesHandler(IConduitRepository repository)
+    public class ProfilesHandler : IProfilesHandler
     {
-        _repository = repository;
-    }
+        private readonly IConduitRepository _repository;
 
-    public async Task<ProfileDto> GetAsync(string profileUsername, string? username,
-        CancellationToken cancellationToken)
-    {
-        var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
-
-        if (profileUser is null)
+        public ProfilesHandler(IConduitRepository repository)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            _repository = repository;
+        }
+
+        public async Task<ProfileDto> GetAsync(string profileUsername, string? username,
+            CancellationToken cancellationToken)
+        {
+            var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
+
+            if (profileUser is null)
             {
-                Status = 422,
-                Detail = "Profile not found",
-                Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
-            });
-        }
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Profile not found",
+                    Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
+                });
+            }
 
-        var isFollowing = false;
+            var isFollowing = false;
 
-        if (username is not null)
-        {
-            isFollowing = await _repository.IsFollowingAsync(profileUsername, username, cancellationToken);
-        }
-
-        return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Image, isFollowing);
-    }
-
-    public async Task<ProfileDto> FollowProfileAsync(string profileUsername, string username,
-        CancellationToken cancellationToken)
-    {
-        var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
-
-        if (profileUser is null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            if (username is not null)
             {
-                Status = 422,
-                Detail = "Profile not found",
-                Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
-            });
+                isFollowing = await _repository.IsFollowingAsync(profileUsername, username, cancellationToken);
+            }
+
+            return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Image, isFollowing);
         }
 
-        _repository.Follow(profileUsername, username);
-        await _repository.SaveChangesAsync(cancellationToken);
-
-        return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, true);
-    }
-
-    public async Task<ProfileDto> UnFollowProfileAsync(string profileUsername, string username,
-        CancellationToken cancellationToken)
-    {
-        var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
-
-        if (profileUser is null)
+        public async Task<ProfileDto> FollowProfileAsync(string profileUsername, string username,
+            CancellationToken cancellationToken)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
+
+            if (profileUser is null)
             {
-                Status = 422,
-                Detail = "Profile not found",
-                Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
-            });
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Profile not found",
+                    Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
+                });
+            }
+
+            _repository.Follow(profileUsername, username);
+            await _repository.SaveChangesAsync(cancellationToken);
+
+            return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, true);
         }
 
-        _repository.UnFollow(profileUsername, username);
-        await _repository.SaveChangesAsync(cancellationToken);
+        public async Task<ProfileDto> UnFollowProfileAsync(string profileUsername, string username,
+            CancellationToken cancellationToken)
+        {
+            var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
 
-        return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, false);
+            if (profileUser is null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Profile not found",
+                    Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
+                });
+            }
+
+            _repository.UnFollow(profileUsername, username);
+            await _repository.SaveChangesAsync(cancellationToken);
+
+            return new ProfileDto(profileUser.Username, profileUser.Bio, profileUser.Email, false);
+        }
     }
+
 }

@@ -1,20 +1,23 @@
-using Hellang.Middleware.ProblemDetails;
+﻿using Hellang.Middleware.ProblemDetails;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Realworlddotnet.Infrastructure.Extensions.ProblemDetails;
-
-public class ProblemDetailsLogging : IPostConfigureOptions<ProblemDetailsOptions>
+namespace Realworlddotnet.Infrastructure.Extensions.ProblemDetails
 {
-    private readonly ILogger<ProblemDetailsLogging> _logger;
 
-    public ProblemDetailsLogging(ILogger<ProblemDetailsLogging> logger)
+    public class ProblemDetailsLogging : IPostConfigureOptions<ProblemDetailsOptions>
     {
-        _logger = logger;
+        private readonly ILogger<ProblemDetailsLogging> _logger;
+
+        public ProblemDetailsLogging(ILogger<ProblemDetailsLogging> logger)
+        {
+            _logger = logger;
+        }
+
+        public void PostConfigure(string name, ProblemDetailsOptions options)
+        {
+            options.OnBeforeWriteDetails += (_, problem) => { _logger.LogInformation("{@Problem}", problem); };
+        }
     }
 
-    public void PostConfigure(string name, ProblemDetailsOptions options)
-    {
-        options.OnBeforeWriteDetails += (_, problem) => { _logger.LogInformation("{@Problem}", problem); };
-    }
 }

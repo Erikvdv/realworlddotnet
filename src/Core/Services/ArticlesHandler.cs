@@ -1,233 +1,258 @@
-namespace Realworlddotnet.Core.Services;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Realworlddotnet.Core.Entities;
+using System;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Infrastructure.Utils;
+using System.Threading;
+using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
+using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Infrastructure.Utils.Interfaces;
+using System.Linq;
 
-public class ArticlesHandler : IArticlesHandler
+namespace Realworlddotnet.Core.Services
 {
-    private readonly IConduitRepository _repository;
 
-    public ArticlesHandler(IConduitRepository repository)
+    public class ArticlesHandler : IArticlesHandler
     {
-        _repository = repository;
-    }
+        private readonly IConduitRepository _repository;
 
-    public async Task<Article> CreateArticleAsync(
-        NewArticleDto newArticle, string username, CancellationToken cancellationToken)
-    {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var tags = await _repository.UpsertTagsAsync(newArticle.TagList, cancellationToken);
-        await _repository.SaveChangesAsync(cancellationToken);
-
-        var article = new Article(
-                newArticle.Title,
-                newArticle.Description,
-                newArticle.Body
-            ) { Author = user, Tags = tags.ToList() }
-            ;
-
-        _repository.AddArticle(article);
-        await _repository.SaveChangesAsync(cancellationToken);
-        return article;
-    }
-
-    public async Task<Article> UpdateArticleAsync(
-        ArticleUpdateDto update, string slug, string username, CancellationToken cancellationToken)
-    {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
+        public ArticlesHandler(IConduitRepository repository)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "Article not found"
-            });
+            _repository = repository;
         }
 
-        if (username != article.Author.Username)
+        public async Task<Article> CreateArticleAsync(
+            NewArticleDto newArticle, string username, CancellationToken cancellationToken)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 403, Detail = $"{username} is not the author"
-            });
+            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+            var tags = await _repository.UpsertTagsAsync(newArticle.TagList, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
+
+            var article = new Article(
+                    newArticle.Title,
+                    newArticle.Description,
+                    newArticle.Body
+                )
+            { Author = user, Tags = tags.ToList() }
+                ;
+
+            _repository.AddArticle(article);
+            await _repository.SaveChangesAsync(cancellationToken);
+            return article;
         }
 
-        article.UpdateArticle(update);
-        await _repository.SaveChangesAsync(cancellationToken);
-        return article;
-    }
-
-    public async Task DeleteArticleAsync(string slug, string username, CancellationToken cancellationToken)
-    {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
+        public async Task<Article> UpdateArticleAsync(
+            ArticleUpdateDto update, string slug, string username, CancellationToken cancellationToken)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
             {
-                Status = 422, Detail = "Article not found"
-            });
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found"
+                });
+            }
+
+            if (username != article.Author.Username)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 403,
+                    Detail = $"{username} is not the author"
+                });
+            }
+
+            article.UpdateArticle(update);
+            await _repository.SaveChangesAsync(cancellationToken);
+            return article;
         }
 
-        if (username != article.Author.Username)
+        public async Task DeleteArticleAsync(string slug, string username, CancellationToken cancellationToken)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
             {
-                Status = 403, Detail = $"{username} is not the author"
-            });
-        }
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found"
+                });
+            }
 
-        _repository.DeleteArticle(article);
-        await _repository.SaveChangesAsync(cancellationToken);
-    }
-
-    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, string username, bool isFeed,
-        CancellationToken cancellationToken)
-    {
-        return _repository.GetArticlesAsync(query, username, false, cancellationToken);
-    }
-
-
-    public async Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken)
-    {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            if (username != article.Author.Username)
             {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 403,
+                    Detail = $"{username} is not the author"
+                });
+            }
 
-        var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
-        article.Comments = comments;
-
-        return article;
-    }
-
-    public async Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
-        CancellationToken cancellationToken)
-    {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
-
-        var comment = new Comment(commentDto.body, user.Username, article.Id);
-        _repository.AddArticleComment(comment);
-
-        await _repository.SaveChangesAsync(cancellationToken);
-        return comment;
-    }
-
-    public async Task RemoveCommentAsync(string slug, int commentId, string username,
-        CancellationToken cancellationToken)
-    {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "Article not found"
-            });
-        }
-
-        var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
-        var comment = comments.FirstOrDefault(x => x.Id == commentId);
-
-        if (comment == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "Comment not found"
-            });
-        }
-
-        if (comment.Author.Username != username)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "User does not own Article"
-            });
-        }
-
-        comments.Remove(comment);
-        await _repository.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task<List<Comment>> GetCommentsAsync(string slug, string? username,
-        CancellationToken cancellationToken)
-    {
-        var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
-        return comments;
-    }
-
-    public async Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken)
-    {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
-
-        var articleFavorite = await _repository.GetArticleFavoriteAsync(user.Username, article.Id);
-
-        if (articleFavorite is null)
-        {
-            _repository.AddArticleFavorite(new ArticleFavorite(user.Username, article.Id));
+            _repository.DeleteArticle(article);
             await _repository.SaveChangesAsync(cancellationToken);
         }
 
-        article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-        return article!;
-    }
-
-    public async Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken)
-    {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
+        public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, string username, bool isFeed,
+            CancellationToken cancellationToken)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
+            return _repository.GetArticlesAsync(query, username, false, cancellationToken);
         }
 
-        var articleFavorite = await _repository.GetArticleFavoriteAsync(user.Username, article.Id);
 
-        if (articleFavorite is not null)
+        public async Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken)
         {
-            _repository.RemoveArticleFavorite(articleFavorite);
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found",
+                    Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+                });
+            }
+
+            var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
+            article.Comments = comments;
+
+            return article;
+        }
+
+        public async Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
+            CancellationToken cancellationToken)
+        {
+            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found",
+                    Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+                });
+            }
+
+            var comment = new Comment(commentDto.body, user.Username, article.Id);
+            _repository.AddArticleComment(comment);
+
+            await _repository.SaveChangesAsync(cancellationToken);
+            return comment;
+        }
+
+        public async Task RemoveCommentAsync(string slug, int commentId, string username,
+            CancellationToken cancellationToken)
+        {
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found"
+                });
+            }
+
+            var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
+            var comment = comments.FirstOrDefault(x => x.Id == commentId);
+
+            if (comment == null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Comment not found"
+                });
+            }
+
+            if (comment.Author.Username != username)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "User does not own Article"
+                });
+            }
+
+            comments.Remove(comment);
             await _repository.SaveChangesAsync(cancellationToken);
         }
 
-        article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-        return article!;
+        public async Task<List<Comment>> GetCommentsAsync(string slug, string? username,
+            CancellationToken cancellationToken)
+        {
+            var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
+            return comments;
+        }
+
+        public async Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken)
+        {
+            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found",
+                    Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+                });
+            }
+
+            var articleFavorite = await _repository.GetArticleFavoriteAsync(user.Username, article.Id);
+
+            if (articleFavorite is null)
+            {
+                _repository.AddArticleFavorite(new ArticleFavorite(user.Username, article.Id));
+                await _repository.SaveChangesAsync(cancellationToken);
+            }
+
+            article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+            return article!;
+        }
+
+        public async Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken)
+        {
+            var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+            var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+
+            if (article == null)
+            {
+                throw new ProblemDetailsException(new ValidationProblemDetails
+                {
+                    Status = 422,
+                    Detail = "Article not found",
+                    Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
+                });
+            }
+
+            var articleFavorite = await _repository.GetArticleFavoriteAsync(user.Username, article.Id);
+
+            if (articleFavorite is not null)
+            {
+                _repository.RemoveArticleFavorite(articleFavorite);
+                await _repository.SaveChangesAsync(cancellationToken);
+            }
+
+            article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
+            return article!;
+        }
+
+        public async Task<string[]> GetTags(CancellationToken cancellationToken)
+        {
+            var tags = await _repository.GetTagsAsync(cancellationToken);
+            return tags.Select(x => x.Id).ToArray();
+        }
     }
 
-    public async Task<string[]> GetTags(CancellationToken cancellationToken)
-    {
-        var tags = await _repository.GetTagsAsync(cancellationToken);
-        return tags.Select(x => x.Id).ToArray();
-    }
 }
