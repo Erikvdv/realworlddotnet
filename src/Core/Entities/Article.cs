@@ -1,3 +1,6 @@
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Infrastructure.Utils;
+
 namespace Realworlddotnet.Core.Entities;
 
 public class Article

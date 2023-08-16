@@ -1,4 +1,6 @@
-namespace Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Core.Dto;
+
+namespace Realworlddotnet.Api.Features.Users;
 
 public interface IUserHandler
 {

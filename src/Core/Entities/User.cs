@@ -1,3 +1,5 @@
+using Realworlddotnet.Core.Dto;
+
 namespace Realworlddotnet.Core.Entities;
 
 public class User

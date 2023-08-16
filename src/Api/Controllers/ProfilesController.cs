@@ -1,3 +1,6 @@
+using Realworlddotnet.Api.Features.Profiles;
+using Realworlddotnet.Core.Dto;
+
 namespace Realworlddotnet.Api.Controllers;
 
 [Route("[controller]")]

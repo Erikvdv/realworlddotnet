@@ -1,4 +1,4 @@
-namespace Realworlddotnet.Api.Models;
+namespace Realworlddotnet.Api.Features.Shared;
 
 public record RequestEnvelope<T>
 {

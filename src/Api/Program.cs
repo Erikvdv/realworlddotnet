@@ -1,3 +1,9 @@
+using Realworlddotnet.Api.Features.Articles;
+using Realworlddotnet.Api.Features.Profiles;
+using Realworlddotnet.Api.Features.Users;
+using Realworlddotnet.Core.Repositories;
+using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // add logging
@@ -64,7 +70,7 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
 
 // for SQLite in memory a connection is provided rather than a connection string
 builder.Services.AddDbContext<ConduitContext>(options => { options.UseSqlite(connection); });
-builder.Services.AddProblemDetails();
+ProblemDetailsExtensions.AddProblemDetails(builder.Services);
 builder.Services.ConfigureOptions<ProblemDetailsLogging>();
 
 var app = builder.Build();
@@ -80,10 +86,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseSerilogRequestLogging();
+
 app.UseProblemDetails();
 app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
+
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "realworlddotnet v1"));

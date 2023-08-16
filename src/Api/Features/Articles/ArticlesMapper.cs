@@ -1,4 +1,6 @@
-namespace Realworlddotnet.Api.Mappers;
+using Realworlddotnet.Core.Dto;
+
+namespace Realworlddotnet.Api.Features.Articles;
 
 public static class ArticlesMapper
 {

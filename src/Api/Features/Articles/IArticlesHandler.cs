@@ -1,4 +1,6 @@
-namespace Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Core.Dto;
+
+namespace Realworlddotnet.Api.Features.Articles;
 
 public interface IArticlesHandler
 {
@@ -15,13 +17,13 @@ public interface IArticlesHandler
 
     public Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken);
 
-    public Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
+    public Task<Core.Entities.Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
         CancellationToken cancellationToken);
 
     public Task RemoveCommentAsync(string slug, int commentId, string username,
         CancellationToken cancellationToken);
 
-    public Task<List<Comment>> GetCommentsAsync(string slug, string? username,
+    public Task<List<Core.Entities.Comment>> GetCommentsAsync(string slug, string? username,
         CancellationToken cancellationToken);
 
     public Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken);

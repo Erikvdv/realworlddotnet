@@ -1,4 +1,7 @@
-﻿namespace Realworlddotnet.Api.Controllers;
+﻿using Realworlddotnet.Api.Features.Articles;
+using Realworlddotnet.Api.Features.Tags;
+
+namespace Realworlddotnet.Api.Controllers;
 
 public class TagsController : Controller
 {

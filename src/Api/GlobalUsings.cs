@@ -1,10 +1,6 @@
 ﻿global using System.Security.Claims;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
-global using Realworlddotnet.Api.Mappers;
-global using Realworlddotnet.Api.Models;
-global using Realworlddotnet.Core.Dto;
-global using Realworlddotnet.Core.Services.Interfaces;
 global using Realworlddotnet.Core.Entities;
 global using System.ComponentModel.DataAnnotations;
 global using System.Security.Cryptography.X509Certificates;
@@ -14,7 +10,6 @@ global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using Microsoft.OpenApi.Models;
-global using Realworlddotnet.Core.Services;
 global using Realworlddotnet.Data.Contexts;
 global using Realworlddotnet.Data.Services;
 global using Realworlddotnet.Infrastructure.Extensions.Authentication;

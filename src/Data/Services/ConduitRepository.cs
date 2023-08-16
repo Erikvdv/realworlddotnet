@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
-using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Core.Repositories;
 using Realworlddotnet.Data.Contexts;
 
 namespace Realworlddotnet.Data.Services;

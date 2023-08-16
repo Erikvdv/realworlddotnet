@@ -1,4 +1,7 @@
-namespace Realworlddotnet.Core.Services;
+using Realworlddotnet.Core.Dto;
+using Realworlddotnet.Core.Repositories;
+
+namespace Realworlddotnet.Api.Features.Articles;
 
 public class ArticlesHandler : IArticlesHandler
 {
@@ -105,7 +108,7 @@ public class ArticlesHandler : IArticlesHandler
         return article;
     }
 
-    public async Task<Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
+    public async Task<Core.Entities.Comment> AddCommentAsync(string slug, string username, CommentDto commentDto,
         CancellationToken cancellationToken)
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
@@ -121,7 +124,7 @@ public class ArticlesHandler : IArticlesHandler
             });
         }
 
-        var comment = new Comment(commentDto.body, user.Username, article.Id);
+        var comment = new Core.Entities.Comment(commentDto.body, user.Username, article.Id);
         _repository.AddArticleComment(comment);
 
         await _repository.SaveChangesAsync(cancellationToken);
@@ -164,7 +167,7 @@ public class ArticlesHandler : IArticlesHandler
         await _repository.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<Comment>> GetCommentsAsync(string slug, string? username,
+    public async Task<List<Core.Entities.Comment>> GetCommentsAsync(string slug, string? username,
         CancellationToken cancellationToken)
     {
         var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);

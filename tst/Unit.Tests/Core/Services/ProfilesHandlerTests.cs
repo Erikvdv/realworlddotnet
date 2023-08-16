@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Hellang.Middleware.ProblemDetails;
 using Moq;
+using Realworlddotnet.Api.Features.Profiles;
 using Realworlddotnet.Core.Dto;
 using Realworlddotnet.Core.Entities;
-using Realworlddotnet.Core.Services;
-using Realworlddotnet.Core.Services.Interfaces;
+using Realworlddotnet.Core.Repositories;
 using Xunit;
 
 namespace Unit.Tests.Core.Services;

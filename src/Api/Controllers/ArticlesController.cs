@@ -1,4 +1,7 @@
-using Comment = Realworlddotnet.Api.Models.Comment;
+using Realworlddotnet.Api.Features.Articles;
+using Realworlddotnet.Api.Features.Shared;
+using Realworlddotnet.Core.Dto;
+using Comment = Realworlddotnet.Api.Features.Articles.Comment;
 
 namespace Realworlddotnet.Api.Controllers;
 

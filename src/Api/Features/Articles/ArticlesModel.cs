@@ -1,4 +1,4 @@
-namespace Realworlddotnet.Api.Models;
+namespace Realworlddotnet.Api.Features.Articles;
 
 public record ArticleEnvelope<T>(T Article);
 

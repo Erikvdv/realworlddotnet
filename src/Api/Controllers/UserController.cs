@@ -1,3 +1,7 @@
+using Realworlddotnet.Api.Features.Shared;
+using Realworlddotnet.Api.Features.Users;
+using Realworlddotnet.Core.Dto;
+
 namespace Realworlddotnet.Api.Controllers;
 
 [Route("[controller]")]
