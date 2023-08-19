@@ -81,14 +81,14 @@ public class ArticlesHandler : IArticlesHandler
         await _repository.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, string username, bool isFeed,
+    public Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery query, string? username, bool isFeed,
         CancellationToken cancellationToken)
     {
         return _repository.GetArticlesAsync(query, username, false, cancellationToken);
     }
 
 
-    public async Task<Article> GetArticleBySlugAsync(string slug, string username, CancellationToken cancellationToken)
+    public async Task<Article> GetArticleBySlugAsync(string slug, string? username, CancellationToken cancellationToken)
     {
         var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
 
@@ -228,7 +228,7 @@ public class ArticlesHandler : IArticlesHandler
         return article!;
     }
 
-    public async Task<string[]> GetTags(CancellationToken cancellationToken)
+    public async Task<string[]> GetTags(CancellationToken cancellationToken = default)
     {
         var tags = await _repository.GetTagsAsync(cancellationToken);
         return tags.Select(x => x.Id).ToArray();
