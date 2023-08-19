@@ -39,12 +39,7 @@ public class UserHandler : IUserHandler
 
         if (user == null || user.Password != login.Password)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Incorrect Credentials",
-                Errors = { new KeyValuePair<string, string[]>("Credentials", new[] { "incorrect credentials" }) }
-            });
+            throw new ProblemDetailsException(422, "Incorrect Credentials");
         }
 
         var token = _tokenGenerator.CreateToken(user.Username);

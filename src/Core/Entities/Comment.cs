@@ -7,16 +7,16 @@ public class Comment
         Body = body;
         Username = username;
         ArticleId = articleId;
-        CreatedAt = DateTimeOffset.UtcNow;
-        UpdatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public int Id { get; set; }
     public string Body { get; set; }
     public string Username { get; set; }
     public Guid ArticleId { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public User Author { get; set; } = null!;
     public Article Article { get; set; } = null!;

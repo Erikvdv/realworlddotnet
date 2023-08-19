@@ -102,13 +102,16 @@ public class ConduitRepository : IConduitRepository
         if (username is not null)
         {
             query = query.Include(x => x.Author)
-                .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username));
+                .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username))
+                .AsSplitQuery();
         }
 
         if (isFeed)
         {
             query = query.Where(x => x.Author.Followers.Any());
         }
+
+        query = query.OrderByDescending(x => x.UpdatedAt);
 
         var total = await query.CountAsync(cancellationToken);
         var pageQuery = query

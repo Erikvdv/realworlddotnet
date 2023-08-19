@@ -3,9 +3,9 @@ using Realworlddotnet.Core.Entities;
 
 namespace Realworlddotnet.Core.Dto;
 
-public record NewArticleDto(string Title, string Description, string Body, IEnumerable<string> TagList);
+public record NewArticleDto([Required] string Title, [Required] string Description, [Required] string Body, [Required] IEnumerable<string> TagList);
 
-public record ArticleUpdateDto(string? Title, string? Description, string? Body) : IValidatableObject
+public record ArticleUpdateDto(string? Title, string? Description, string? Body)
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

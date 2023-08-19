@@ -1,29 +1,32 @@
 # ![RealWorld Example App](logo.png)
 
-> ### [Dotnet 6] codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
+> ### [Dotnet 7] codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
 
 ### [Demo](https://demo.realworld.io/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
 
-This codebase was created to demonstrate a fully fledged fullstack application built with **[Dotnet 6]** including CRUD operations, authentication, routing, pagination, and more.
+This codebase was created to demonstrate a fully fledged fullstack application built with **[Dotnet 7]** including CRUD operations, authentication, routing, pagination, and more.
 
-We've gone to great lengths to adhere to the **[Dotnet 6]** community styleguides & best practices.
+We've gone to great lengths to adhere to the **[Dotnet 7]** community styleguides & best practices.
 
 For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
 
 # How it works
 
-Traditional Clean Architecture setup using Dotnet 6.
+Conversion of [Clean Architecture setup using Dotnet](https://github.com/Erikvdv/realworlddotnet) 
+into a version using Minimal API's
+The solution now does not have a direct dependency with dotnet mvc anymore
+
 Consisting of the following layers:
-- api
-- core
+- api 
 - data
 - infrastructure
 
 
 Build using the following features:
+- Minimal api's
 - the new WebApplication.CreateBuilder(args)
 - file scoped namespaces
 - Entity Framework Core with SQLite db

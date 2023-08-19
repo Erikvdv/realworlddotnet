@@ -26,10 +26,8 @@ public class UserModule : ICarterModule
                 ) =>
                 {
                     if (!MiniValidator.TryValidate(request, out var errors))
-                    {
                         return Results.ValidationProblem(errors);
-                    }
-
+                    
                     var username = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
                     var user = await userHandler.UpdateAsync(username!, request.User, new CancellationToken());
                     return Results.Ok(new UserEnvelope<UserDto>(user));
@@ -67,7 +65,7 @@ public class UserModule : ICarterModule
                     var user = await userHandler.LoginAsync(request.User, new CancellationToken());
                     return TypedResults.Ok(new UserEnvelope<UserDto>(user));
                 })
-            .Produces<UnprocessableEntity<ProblemDetails>>(422)
+            .Produces<UnprocessableEntity<ValidationProblem>>(422)
             .WithTags("User")
             .WithName("LoginUser")
             .IncludeInOpenApi().ProducesValidationProblem();

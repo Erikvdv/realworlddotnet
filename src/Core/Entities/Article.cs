@@ -11,8 +11,8 @@ public class Article
         Title = title;
         Description = description;
         Body = body;
-        CreatedAt = DateTimeOffset.UtcNow;
-        UpdatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public Guid Id { get; set; }
@@ -27,9 +27,9 @@ public class Article
 
     public User Author { get; set; } = null!;
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public bool Favorited { get; set; }
 
@@ -58,6 +58,6 @@ public class Article
             Description = update.Description;
         }
 
-        UpdatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

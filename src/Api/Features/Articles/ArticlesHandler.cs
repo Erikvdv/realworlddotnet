@@ -38,18 +38,12 @@ public class ArticlesHandler : IArticlesHandler
 
         if (article == null)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "Article not found"
-            });
+            throw new ProblemDetailsException(422, "ArticleNotFound");
         }
 
         if (username != article.Author.Username)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 403, Detail = $"{username} is not the author"
-            });
+            throw new ProblemDetailsException(403, $"{username} is not the author");
         }
 
         article.UpdateArticle(update);
@@ -59,22 +53,15 @@ public class ArticlesHandler : IArticlesHandler
 
     public async Task DeleteArticleAsync(string slug, string username, CancellationToken cancellationToken)
     {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "Article not found"
-            });
-        }
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken) ??
+                      throw new ProblemDetailsException(new HttpValidationProblemDetails
+                      {
+                          Status = 422, Title = "Article not found", Detail = $"Slug: {slug}"
+                      });
 
         if (username != article.Author.Username)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 403, Detail = $"{username} is not the author"
-            });
+            throw new ProblemDetailsException(403, $"{username} is not the author");
         }
 
         _repository.DeleteArticle(article);
@@ -90,17 +77,11 @@ public class ArticlesHandler : IArticlesHandler
 
     public async Task<Article> GetArticleBySlugAsync(string slug, string? username, CancellationToken cancellationToken)
     {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken) ??
+                      throw new ProblemDetailsException(new HttpValidationProblemDetails
+                      {
+                          Status = 422, Title = "Article not found", Detail = $"Slug: {slug}"
+                      });
 
         var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
         article.Comments = comments;
@@ -112,17 +93,11 @@ public class ArticlesHandler : IArticlesHandler
         CancellationToken cancellationToken)
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken) ??
+                      throw new ProblemDetailsException(new HttpValidationProblemDetails
+                      {
+                          Status = 422, Title = "Article not found", Detail = $"Slug: {slug}"
+                      });
 
         var comment = new Core.Entities.Comment(commentDto.body, user.Username, article.Id);
         _repository.AddArticleComment(comment);
@@ -134,34 +109,25 @@ public class ArticlesHandler : IArticlesHandler
     public async Task RemoveCommentAsync(string slug, int commentId, string username,
         CancellationToken cancellationToken)
     {
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+        _ = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken) ??
+            throw new ProblemDetailsException(new HttpValidationProblemDetails
             {
-                Status = 422, Detail = "Article not found"
+                Status = 422, Title = "Article not found", Detail = $"Slug: {slug}"
             });
-        }
 
         var comments = await _repository.GetCommentsBySlugAsync(slug, username, cancellationToken);
-        var comment = comments.FirstOrDefault(x => x.Id == commentId);
+        var comment = comments.FirstOrDefault(x => x.Id == commentId) ??
+                      throw new ProblemDetailsException(new HttpValidationProblemDetails
+                      {
+                          Status = 422, Title = "Comment not found", Detail = $"CommentId {commentId}",
+                      });
 
-        if (comment == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422, Detail = "Comment not found"
-            });
-        }
 
         if (comment.Author.Username != username)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
+            throw new ProblemDetailsException(new HttpValidationProblemDetails
             {
-                Status = 422, Detail = "User does not own Article"
+                Status = 422, Title = "User does not own Article", Detail = $"User: {username},  Slug: {slug}"
             });
-        }
 
         comments.Remove(comment);
         await _repository.SaveChangesAsync(cancellationToken);
@@ -177,17 +143,11 @@ public class ArticlesHandler : IArticlesHandler
     public async Task<Article> AddFavoriteAsync(string slug, string username, CancellationToken cancellationToken)
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken) ??
+                      throw new ProblemDetailsException(new HttpValidationProblemDetails
+                      {
+                          Status = 422, Title = "Article not found", Detail = $"Slug: {slug}"
+                      });
 
         var articleFavorite = await _repository.GetArticleFavoriteAsync(user.Username, article.Id);
 
@@ -204,17 +164,11 @@ public class ArticlesHandler : IArticlesHandler
     public async Task<Article> DeleteFavorite(string slug, string username, CancellationToken cancellationToken)
     {
         var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken);
-
-        if (article == null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Article not found",
-                Errors = { new KeyValuePair<string, string[]>("slug", new[] { slug }) }
-            });
-        }
+        var article = await _repository.GetArticleBySlugAsync(slug, false, cancellationToken) ??
+                      throw new ProblemDetailsException(new HttpValidationProblemDetails
+                      {
+                          Status = 422, Title = "Article not found", Detail = $"Slug: {slug}"
+                      });
 
         var articleFavorite = await _repository.GetArticleFavoriteAsync(user.Username, article.Id);
 

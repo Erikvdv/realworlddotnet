@@ -19,12 +19,7 @@ public class ProfilesHandler : IProfilesHandler
 
         if (profileUser is null)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Profile not found",
-                Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
-            });
+            throw new ProblemDetailsException(422, "Profile not found");
         }
 
         var isFollowing = false;
@@ -43,14 +38,8 @@ public class ProfilesHandler : IProfilesHandler
         var profileUser = await _repository.GetUserByUsernameAsync(profileUsername, cancellationToken);
 
         if (profileUser is null)
-        {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Profile not found",
-                Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
-            });
-        }
+            throw new ProblemDetailsException(422, "Profile not found");
+        
 
         _repository.Follow(profileUsername, username);
         await _repository.SaveChangesAsync(cancellationToken);
@@ -65,12 +54,7 @@ public class ProfilesHandler : IProfilesHandler
 
         if (profileUser is null)
         {
-            throw new ProblemDetailsException(new ValidationProblemDetails
-            {
-                Status = 422,
-                Detail = "Profile not found",
-                Errors = { new KeyValuePair<string, string[]>("Profile", new[] { "not found" }) }
-            });
+            throw new ProblemDetailsException(422, "Profile not found");
         }
 
         _repository.UnFollow(profileUsername, username);

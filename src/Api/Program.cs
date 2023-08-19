@@ -23,19 +23,12 @@ const string connectionString = "Filename=:memory:";
 var connection = new SqliteConnection(connectionString);
 connection.Open();
 
-// Add services to the container.
-builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SupportNonNullableReferenceTypes();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "realworlddotnet", Version = "v1" });
-});
-
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.SuppressInferBindingSourcesForParameters = true;
 });
 
 builder.Services.AddScoped<IConduitRepository, ConduitRepository>();
@@ -55,6 +48,7 @@ builder.Services.AddSingleton<ITokenGenerator>(container =>
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddAuthorization();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
     .Configure<ILogger<CertificateProvider>>((o, logger) =>
     {
@@ -72,7 +66,8 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
 
 // for SQLite in memory a connection is provided rather than a connection string
 builder.Services.AddDbContext<ConduitContext>(options => { options.UseSqlite(connection); });
-ProblemDetailsExtensions.AddProblemDetails(builder.Services);
+
+builder.Services.AddProblemDetails((Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options)  => {});
 builder.Services.ConfigureOptions<ProblemDetailsLogging>();
 builder.Services.AddCarter();
 
@@ -88,7 +83,12 @@ using (var scope = app.Services.CreateScope())
     context?.Database.EnsureCreated();
 }
 
-app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging(options =>
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        diagnosticContext.Set("UserId", httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "")
+);
+
+
 
 app.UseProblemDetails();
 app.UseAuthentication();
