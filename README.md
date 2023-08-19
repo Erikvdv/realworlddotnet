@@ -3,6 +3,9 @@
 > ### [Dotnet 6] codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
 
+For a version using **dotnet 7 and minimal api's** check [here](https://github.com/Erikvdv/realworldapiminimal)
+
+
 ### [Demo](https://demo.realworld.io/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
 
