@@ -97,7 +97,7 @@ public class ArticlesController(IArticlesHandler articlesHandler) : ControllerBa
     public async Task<CommentEnvelope<Comment>> AddCommentAsync(string slug,
         RequestEnvelope<CommentEnvelope<CommentDto>> request, CancellationToken cancellationToken)
     {
-        var result = await articlesHandler.AddCommentAsync(slug, Username, request.Body.comment, cancellationToken);
+        var result = await articlesHandler.AddCommentAsync(slug, Username, request.Body.Comment, cancellationToken);
         var comment = CommentMapper.MapFromCommentEntity(result);
         return new CommentEnvelope<Comment>(comment);
     }
