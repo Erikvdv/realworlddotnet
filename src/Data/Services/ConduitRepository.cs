@@ -135,7 +135,7 @@ public class ConduitRepository(ConduitContext context) : IConduitRepository
             return article;
         }
 
-        var favoriteCount = await context.ArticleFavorites.CountAsync(x => x.ArticleId == article.Id);
+        var favoriteCount = await context.ArticleFavorites.CountAsync(x => x.ArticleId == article.Id, cancellationToken: cancellationToken);
         article.Favorited = favoriteCount > 0;
         article.FavoritesCount = favoriteCount;
         return article;
