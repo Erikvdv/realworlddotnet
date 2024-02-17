@@ -3,12 +3,9 @@ using Realworlddotnet.Core.Entities;
 
 namespace Realworlddotnet.Data.Contexts;
 
-public class ConduitContext : DbContext
+public class ConduitContext(DbContextOptions<ConduitContext> options) 
+    : DbContext(options)
 {
-    public ConduitContext(DbContextOptions<ConduitContext> options) : base(options)
-    {
-    }
-
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Article> Articles { get; set; } = null!;
     public DbSet<Comment> Comments { get; set; } = null!;

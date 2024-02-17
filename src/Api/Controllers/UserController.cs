@@ -2,20 +2,13 @@ namespace Realworlddotnet.Api.Controllers;
 
 [Route("[controller]")]
 [Authorize]
-public class UserController : ControllerBase
+public class UserController(IUserHandler userHandler) : ControllerBase
 {
-    private readonly IUserHandler _userHandler;
-
-    public UserController(IUserHandler userHandler)
-    {
-        _userHandler = userHandler;
-    }
-
     [HttpGet]
     public async Task<ActionResult<UserEnvelope<UserDto>>> GetUser(CancellationToken cancellationToken)
     {
         var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userHandler.GetAsync(username, cancellationToken);
+        var user = await userHandler.GetAsync(username, cancellationToken);
         return Ok(new UserEnvelope<UserDto>(user));
     }
 
@@ -24,7 +17,7 @@ public class UserController : ControllerBase
         RequestEnvelope<UserEnvelope<UpdatedUserDto>> request, CancellationToken cancellationToken)
     {
         var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userHandler.UpdateAsync(username, request.Body.User, cancellationToken);
+        var user = await userHandler.UpdateAsync(username, request.Body.User, cancellationToken);
 
         return Ok(new UserEnvelope<UserDto>(user));
     }

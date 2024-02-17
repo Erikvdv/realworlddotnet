@@ -13,18 +13,11 @@ using Realworlddotnet.Data.Contexts;
 
 namespace Realworlddotnet.Data.Services;
 
-public class ConduitRepository : IConduitRepository
+public class ConduitRepository(ConduitContext context) : IConduitRepository
 {
-    private readonly ConduitContext _context;
-
-    public ConduitRepository(ConduitContext context)
-    {
-        _context = context;
-    }
-
     public async Task AddUserAsync(User user)
     {
-        if (await _context.Users.AnyAsync(x => x.Username == user.Username))
+        if (await context.Users.AnyAsync(x => x.Username == user.Username))
         {
             throw new ProblemDetailsException(new ValidationProblemDetails
             {
@@ -34,7 +27,7 @@ public class ConduitRepository : IConduitRepository
             });
         }
 
-        if (await _context.Users.AnyAsync(x => x.Email == user.Email))
+        if (await context.Users.AnyAsync(x => x.Email == user.Email))
         {
             throw new ProblemDetailsException(new ValidationProblemDetails
             {
@@ -44,39 +37,39 @@ public class ConduitRepository : IConduitRepository
             });
         }
 
-        _context.Users.Add(user);
+        context.Users.Add(user);
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        return await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
+        return await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
     }
 
 
     public Task<User> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
     {
-        return _context.Users.FirstAsync(x => x.Username == username, cancellationToken);
+        return context.Users.FirstAsync(x => x.Username == username, cancellationToken);
     }
 
     public async Task<IEnumerable<Tag>> UpsertTagsAsync(IEnumerable<string> tags,
         CancellationToken cancellationToken)
     {
-        var dbTags = await _context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken);
+        var dbTags = await context.Tags.Where(x => tags.Contains(x.Id)).ToListAsync(cancellationToken);
 
         foreach (var tag in tags)
         {
             if (!dbTags.Exists(x => x.Id == tag))
             {
-                _context.Tags.Add(new Tag(tag));
+                context.Tags.Add(new Tag(tag));
             }
         }
 
-        return _context.Tags;
+        return context.Tags;
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<ArticlesResponseDto> GetArticlesAsync(
@@ -85,7 +78,7 @@ public class ConduitRepository : IConduitRepository
         bool isFeed,
         CancellationToken cancellationToken)
     {
-        var query = _context.Articles.Select(x => x);
+        var query = context.Articles.Select(x => x);
 
         if (!string.IsNullOrWhiteSpace(articlesQuery.Author))
         {
@@ -125,7 +118,7 @@ public class ConduitRepository : IConduitRepository
     public async Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking,
         CancellationToken cancellationToken)
     {
-        var query = _context.Articles
+        var query = context.Articles
             .Include(x => x.Author)
             .Include(x => x.Tags);
 
@@ -142,7 +135,7 @@ public class ConduitRepository : IConduitRepository
             return article;
         }
 
-        var favoriteCount = await _context.ArticleFavorites.CountAsync(x => x.ArticleId == article.Id);
+        var favoriteCount = await context.ArticleFavorites.CountAsync(x => x.ArticleId == article.Id);
         article.Favorited = favoriteCount > 0;
         article.FavoritesCount = favoriteCount;
         return article;
@@ -150,39 +143,39 @@ public class ConduitRepository : IConduitRepository
 
     public void AddArticle(Article article)
     {
-        _context.Articles.Add(article);
+        context.Articles.Add(article);
     }
 
     public void DeleteArticle(Article article)
     {
-        _context.Articles.Remove(article);
+        context.Articles.Remove(article);
     }
 
     public async Task<ArticleFavorite?> GetArticleFavoriteAsync(string username, Guid articleId)
     {
-        return await _context.ArticleFavorites.FirstOrDefaultAsync(x =>
+        return await context.ArticleFavorites.FirstOrDefaultAsync(x =>
             x.Username == username && x.ArticleId == articleId);
     }
 
     public void AddArticleFavorite(ArticleFavorite articleFavorite)
     {
-        _context.ArticleFavorites.Add(articleFavorite);
+        context.ArticleFavorites.Add(articleFavorite);
     }
 
     public void AddArticleComment(Comment comment)
     {
-        _context.Comments.Add(comment);
+        context.Comments.Add(comment);
     }
 
     public void RemoveArticleComment(Comment comment)
     {
-        _context.Comments.Remove(comment);
+        context.Comments.Remove(comment);
     }
 
     public async Task<List<Comment>> GetCommentsBySlugAsync(string slug, string? username,
         CancellationToken cancellationToken)
     {
-        return await _context.Comments.Where(x => x.Article.Slug == slug)
+        return await context.Comments.Where(x => x.Article.Slug == slug)
             .Include(x => x.Author)
             .ThenInclude(x => x.Followers.Where(fu => fu.FollowerUsername == username))
             .ToListAsync(cancellationToken);
@@ -190,28 +183,28 @@ public class ConduitRepository : IConduitRepository
 
     public void RemoveArticleFavorite(ArticleFavorite articleFavorite)
     {
-        _context.ArticleFavorites.Remove(articleFavorite);
+        context.ArticleFavorites.Remove(articleFavorite);
     }
 
     public Task<List<Tag>> GetTagsAsync(CancellationToken cancellationToken)
     {
-        return _context.Tags.AsNoTracking().ToListAsync(cancellationToken);
+        return context.Tags.AsNoTracking().ToListAsync(cancellationToken);
     }
 
     public Task<bool> IsFollowingAsync(string username, string followerUsername, CancellationToken cancellationToken)
     {
-        return _context.FollowedUsers.AnyAsync(
+        return context.FollowedUsers.AnyAsync(
             x => x.Username == username && x.FollowerUsername == followerUsername,
             cancellationToken);
     }
 
     public void Follow(string username, string followerUsername)
     {
-        _context.FollowedUsers.Add(new UserLink(username, followerUsername));
+        context.FollowedUsers.Add(new UserLink(username, followerUsername));
     }
 
     public void UnFollow(string username, string followerUsername)
     {
-        _context.FollowedUsers.Remove(new UserLink(username, followerUsername));
+        context.FollowedUsers.Remove(new UserLink(username, followerUsername));
     }
 }
