@@ -1,13 +1,8 @@
 namespace Realworlddotnet.Core.Entities;
 
-public class Tag
+public class Tag(string id)
 {
-    public Tag(string id)
-    {
-        Id = id;
-    }
-
-    public string Id { get; set; }
+    public string Id { get; set; } = id;
 
     public ICollection<Article> Articles { get; set; } = null!;
 }

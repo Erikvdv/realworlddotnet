@@ -2,9 +2,9 @@ namespace Realworlddotnet.Api.Models;
 
 public record ArticleEnvelope<T>(T Article);
 
-public record CommentEnvelope<T>(T comment);
+public record CommentEnvelope<T>(T Comment);
 
-public record CommentsEnvelope<T>(T comments);
+public record CommentsEnvelope<T>(T Comments);
 
 public record Comment(int Id,
     DateTimeOffset CreatedAt,

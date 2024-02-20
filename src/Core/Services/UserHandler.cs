@@ -1,38 +1,30 @@
 namespace Realworlddotnet.Core.Services;
 
-public class UserHandler : IUserHandler
+public class UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator)
+    : IUserHandler
 {
-    private readonly IConduitRepository _repository;
-    private readonly ITokenGenerator _tokenGenerator;
-
-    public UserHandler(IConduitRepository repository, ITokenGenerator tokenGenerator)
-    {
-        _repository = repository;
-        _tokenGenerator = tokenGenerator;
-    }
-
     public async Task<UserDto> CreateAsync(NewUserDto newUser, CancellationToken cancellationToken)
     {
         var user = new User(newUser);
-        await _repository.AddUserAsync(user);
-        await _repository.SaveChangesAsync(cancellationToken);
-        var token = _tokenGenerator.CreateToken(user.Username);
+        await repository.AddUserAsync(user);
+        await repository.SaveChangesAsync(cancellationToken);
+        var token = tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }
 
     public async Task<UserDto> UpdateAsync(
         string username, UpdatedUserDto updatedUser, CancellationToken cancellationToken)
     {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
+        var user = await repository.GetUserByUsernameAsync(username, cancellationToken);
         user.UpdateUser(updatedUser);
-        await _repository.SaveChangesAsync(cancellationToken);
-        var token = _tokenGenerator.CreateToken(user.Username);
+        await repository.SaveChangesAsync(cancellationToken);
+        var token = tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }
 
     public async Task<UserDto> LoginAsync(LoginUserDto login, CancellationToken cancellationToken)
     {
-        var user = await _repository.GetUserByEmailAsync(login.Email);
+        var user = await repository.GetUserByEmailAsync(login.Email);
 
         if (user == null || user.Password != login.Password)
         {
@@ -44,14 +36,14 @@ public class UserHandler : IUserHandler
             });
         }
 
-        var token = _tokenGenerator.CreateToken(user.Username);
+        var token = tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }
 
     public async Task<UserDto> GetAsync(string username, CancellationToken cancellationToken)
     {
-        var user = await _repository.GetUserByUsernameAsync(username, cancellationToken);
-        var token = _tokenGenerator.CreateToken(user.Username);
+        var user = await repository.GetUserByUsernameAsync(username, cancellationToken);
+        var token = tokenGenerator.CreateToken(user.Username);
         return new UserDto(user.Username, user.Email, token, user.Bio, user.Image);
     }
 }

@@ -5,15 +5,9 @@ using Realworlddotnet.Infrastructure.Utils.Interfaces;
 
 namespace Realworlddotnet.Infrastructure.Utils;
 
-public class CertificateProvider : ICertificateProvider
+public class CertificateProvider(ILogger<CertificateProvider> logger) 
+    : ICertificateProvider
 {
-    private readonly ILogger<CertificateProvider> _logger;
-
-    public CertificateProvider(ILogger<CertificateProvider> logger)
-    {
-        _logger = logger;
-    }
-
     public X509Certificate2 LoadFromUserStore(string thumbprint)
     {
         if (string.IsNullOrWhiteSpace(thumbprint))
@@ -21,7 +15,7 @@ public class CertificateProvider : ICertificateProvider
             throw new ArgumentNullException(nameof(thumbprint));
         }
 
-        _logger.LogInformation("Loading certificate {Thumbprint} from store", thumbprint);
+        logger.LogInformation("Loading certificate {Thumbprint} from store", thumbprint);
 
         var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
         store.Open(OpenFlags.ReadOnly);
@@ -45,7 +39,7 @@ public class CertificateProvider : ICertificateProvider
             throw new ArgumentNullException(nameof(filename));
         }
 
-        _logger.LogInformation("Loading certificate {Thumbprint}", filename);
+        logger.LogInformation("Loading certificate {Thumbprint}", filename);
         var certCollection = new X509Certificate2Collection();
         certCollection.Import(filename, password);
 

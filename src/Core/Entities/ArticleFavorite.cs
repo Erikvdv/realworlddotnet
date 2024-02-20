@@ -1,16 +1,10 @@
 ﻿namespace Realworlddotnet.Core.Entities;
 
-public class ArticleFavorite
+public class ArticleFavorite(string username, Guid articleId)
 {
-    public ArticleFavorite(string username, Guid articleId)
-    {
-        Username = username;
-        ArticleId = articleId;
-    }
+    public string Username { get; set; } = username;
 
-    public string Username { get; set; }
-
-    public Guid ArticleId { get; set; }
+    public Guid ArticleId { get; set; } = articleId;
 
     public User User { get; set; } = null!;
 

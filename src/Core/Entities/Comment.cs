@@ -1,22 +1,13 @@
 ﻿namespace Realworlddotnet.Core.Entities;
 
-public class Comment
+public class Comment(string body, string username, Guid articleId)
 {
-    public Comment(string body, string username, Guid articleId)
-    {
-        Body = body;
-        Username = username;
-        ArticleId = articleId;
-        CreatedAt = DateTimeOffset.UtcNow;
-        UpdatedAt = DateTimeOffset.UtcNow;
-    }
-
     public int Id { get; set; }
-    public string Body { get; set; }
-    public string Username { get; set; }
-    public Guid ArticleId { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset UpdatedAt { get; set; }
+    public string Body { get; set; } = body;
+    public string Username { get; set; } = username;
+    public Guid ArticleId { get; set; } = articleId;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     public User Author { get; set; } = null!;
     public Article Article { get; set; } = null!;

@@ -4,15 +4,8 @@ namespace Realworlddotnet.Api.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class ArticlesController : ControllerBase
+public class ArticlesController(IArticlesHandler articlesHandler) : ControllerBase
 {
-    private readonly IArticlesHandler _articlesHandler;
-
-    public ArticlesController(IArticlesHandler articlesHandler)
-    {
-        _articlesHandler = articlesHandler;
-    }
-
     private string Username => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpPost]
@@ -22,7 +15,7 @@ public class ArticlesController : ControllerBase
         CancellationToken cancellationToken)
     {
         var article =
-            await _articlesHandler.CreateArticleAsync(request.Body.Article, Username, cancellationToken);
+            await articlesHandler.CreateArticleAsync(request.Body.Article, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }
@@ -31,7 +24,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticlesResponse>> GetAsync(
         [FromQuery] ArticlesQuery query, CancellationToken cancellationToken)
     {
-        var response = await _articlesHandler.GetArticlesAsync(query, Username, false, cancellationToken);
+        var response = await articlesHandler.GetArticlesAsync(query, Username, false, cancellationToken);
         var result = ArticlesMapper.MapFromArticles(response);
         return result;
     }
@@ -40,7 +33,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetBySlugAsync(string slug,
         CancellationToken cancellationToken)
     {
-        var article = await _articlesHandler.GetArticleBySlugAsync(slug, Username, cancellationToken);
+        var article = await articlesHandler.GetArticleBySlugAsync(slug, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }
@@ -50,7 +43,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UpdateBySlugAsync(string slug,
         RequestEnvelope<ArticleEnvelope<ArticleUpdateDto>> request, CancellationToken cancellationToken)
     {
-        var article = await _articlesHandler.UpdateArticleAsync(request.Body.Article,
+        var article = await articlesHandler.UpdateArticleAsync(request.Body.Article,
             slug,
             Username,
             cancellationToken);
@@ -64,7 +57,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> DeleteBySlugAsync(string slug,
         CancellationToken cancellationToken)
     {
-        await _articlesHandler.DeleteArticleAsync(slug, Username, cancellationToken);
+        await articlesHandler.DeleteArticleAsync(slug, Username, cancellationToken);
         return Ok();
     }
 
@@ -73,7 +66,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> FavoriteBySlugAsync(string slug,
         CancellationToken cancellationToken)
     {
-        var article = await _articlesHandler.AddFavoriteAsync(slug, Username, cancellationToken);
+        var article = await articlesHandler.AddFavoriteAsync(slug, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }
@@ -83,7 +76,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> UnFavoriteBySlugAsync(string slug,
         CancellationToken cancellationToken)
     {
-        var article = await _articlesHandler.DeleteFavorite(slug, Username, cancellationToken);
+        var article = await articlesHandler.DeleteFavorite(slug, Username, cancellationToken);
         var result = ArticlesMapper.MapFromArticleEntity(article);
         return new ArticleEnvelope<ArticleResponse>(result);
     }
@@ -94,7 +87,7 @@ public class ArticlesController : ControllerBase
         CancellationToken cancellationToken)
     {
         var articlesQuery = new ArticlesQuery(null, null, null, query.Limit, query.Offset);
-        var response = await _articlesHandler.GetArticlesAsync(articlesQuery, Username, false, cancellationToken);
+        var response = await articlesHandler.GetArticlesAsync(articlesQuery, Username, false, cancellationToken);
         var result = ArticlesMapper.MapFromArticles(response);
         return result;
     }
@@ -104,7 +97,7 @@ public class ArticlesController : ControllerBase
     public async Task<CommentEnvelope<Comment>> AddCommentAsync(string slug,
         RequestEnvelope<CommentEnvelope<CommentDto>> request, CancellationToken cancellationToken)
     {
-        var result = await _articlesHandler.AddCommentAsync(slug, Username, request.Body.comment, cancellationToken);
+        var result = await articlesHandler.AddCommentAsync(slug, Username, request.Body.Comment, cancellationToken);
         var comment = CommentMapper.MapFromCommentEntity(result);
         return new CommentEnvelope<Comment>(comment);
     }
@@ -113,7 +106,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<CommentsEnvelope<List<Comment>>>> GetCommentAsync(string slug,
         CancellationToken cancellationToken)
     {
-        var result = await _articlesHandler.GetCommentsAsync(slug, Username, cancellationToken);
+        var result = await articlesHandler.GetCommentsAsync(slug, Username, cancellationToken);
         var comments = result.Select(CommentMapper.MapFromCommentEntity);
         return new CommentsEnvelope<List<Comment>>(comments.ToList());
     }
@@ -123,7 +116,7 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<ArticleEnvelope<ArticleResponse>>> GetCommentAsync(string slug, int commentId,
         CancellationToken cancellationToken)
     {
-        await _articlesHandler.RemoveCommentAsync(slug, commentId, Username, cancellationToken);
+        await articlesHandler.RemoveCommentAsync(slug, commentId, Username, cancellationToken);
         return Ok();
     }
 }
