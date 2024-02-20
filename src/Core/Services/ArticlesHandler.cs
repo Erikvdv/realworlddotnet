@@ -13,8 +13,7 @@ public class ArticlesHandler(IConduitRepository repository) : IArticlesHandler
                 newArticle.Title,
                 newArticle.Description,
                 newArticle.Body
-            ) { Author = user, Tags = tags.ToList() }
-            ;
+            ) { Author = user, Tags = tags.ToList() };
 
         repository.AddArticle(article);
         await repository.SaveChangesAsync(cancellationToken);
@@ -223,4 +222,6 @@ public class ArticlesHandler(IConduitRepository repository) : IArticlesHandler
         var tags = await repository.GetTagsAsync(cancellationToken);
         return tags.Select(x => x.Id).ToArray();
     }
+    
+    
 }
